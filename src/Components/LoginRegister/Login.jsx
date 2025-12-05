@@ -1,12 +1,13 @@
 import { useContext, useState } from 'react';
-import { FaGoogle, FaSignInAlt, FaUser, FaLock } from 'react-icons/fa';
+import { FaGoogle, FaSignInAlt, FaUser, FaLock, FaUserPlus } from 'react-icons/fa';
 import { AuthContext } from '../../Contexts/AuthContext';
 import { useNavigate } from 'react-router';
 
 const Login = () => {
-    const { signInUser, signInWithGoogle } = useContext(AuthContext);
+    const { signInUser, signInWithGoogle, createUser } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isLogin, setIsLogin] = useState(true);
     const navigate = useNavigate();
 
     const handleEmailLogin = async (e) => {
@@ -24,6 +25,31 @@ const Login = () => {
             setTimeout(() => navigate('/'), 2000);
         } catch (err) {
             toast.error(err.message || 'Login failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setShowSuccess(false);
+        const form = e.target;
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        const name = form.name.value;
+
+        try {
+            await createUser(email, password);
+            setShowSuccess(true);
+            toast.success('Account created successfully!');
+
+            // After registration, you might want to auto-login or redirect to login
+            setTimeout(() => {
+                setIsLogin(true);
+            }, 2000);
+        } catch (err) {
+            toast.error(err.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
@@ -53,110 +79,265 @@ const Login = () => {
 
             <div className="relative w-full max-w-md z-10">
                 <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-                    <div className="p-8">
-                        <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4">
-                                <FaSignInAlt className="text-white text-2xl" />
-                            </div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
-                                Welcome Back
-                            </h1>
-                            <p className="text-gray-600 mt-2">Sign in to your Clubify account</p>
+                    <div className="p-0">
+                        {/* Toggle Buttons */}
+                        <div className="flex border-b border-gray-200 relative">
+                            <div
+                                className={`absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] rounded-t-2xl transition-all duration-500 ease-in-out ${
+                                    isLogin ? 'translate-x-0' : 'translate-x-full'
+                                }`}
+                            ></div>
+                            <button
+                                onClick={() => setIsLogin(true)}
+                                className={`flex-1 py-4 px-6 text-center font-semibold relative z-10 transition-colors duration-300 ${
+                                    isLogin
+                                        ? 'text-white'
+                                        : 'text-gray-600 hover:text-[#A45CFF]'
+                                }`}
+                            >
+                                <div className="flex items-center justify-center gap-2">
+                                    <FaSignInAlt /> Sign In
+                                </div>
+                            </button>
+                            <button
+                                onClick={() => setIsLogin(false)}
+                                className={`flex-1 py-4 px-6 text-center font-semibold relative z-10 transition-colors duration-300 ${
+                                    !isLogin
+                                        ? 'text-white'
+                                        : 'text-gray-600 hover:text-[#A45CFF]'
+                                }`}
+                            >
+                                <div className="flex items-center justify-center gap-2">
+                                    <FaUserPlus /> Register
+                                </div>
+                            </button>
                         </div>
 
-                        <form onSubmit={handleEmailLogin} className="space-y-6">
-                            {/* Email Field */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <FaUser className="text-gray-400" />
+                        {/* Form Content */}
+                        <div className="p-8">
+                            <div
+                                className={`transition-all duration-500 ease-in-out transform ${
+                                    isLogin ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 absolute'
+                                } ${isLogin ? '' : 'h-0 overflow-hidden'}`}
+                                style={{ transition: 'all 0.5s ease-in-out' }}
+                            >
+                                <div className="space-y-6">
+                                    <div className="text-center">
+                                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4">
+                                            <FaSignInAlt className="text-white text-2xl" />
+                                        </div>
+                                        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
+                                            Welcome Back
+                                        </h1>
+                                        <p className="text-gray-600 mt-2">Sign in to your Clubify account</p>
                                     </div>
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                                        placeholder="Enter your email"
-                                        required
-                                    />
+
+                                    <form onSubmit={handleEmailLogin} className="space-y-6">
+                                        {/* Email Field */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <FaUser className="text-gray-400" />
+                                                </div>
+                                                <input
+                                                    name="email"
+                                                    type="email"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                                                    placeholder="Enter your email"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Password Field */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <FaLock className="text-gray-400" />
+                                                </div>
+                                                <input
+                                                    name="password"
+                                                    type="password"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                                                    placeholder="Enter your password"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Forgot Password */}
+                                        <div className="flex justify-end">
+                                            <a href="#" className="text-sm text-[#A45CFF] hover:text-[#7b3db4] hover:underline font-medium transition-colors">
+                                                Forgot password?
+                                            </a>
+                                        </div>
+
+                                        {/* Login Button */}
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                                        >
+                                            {loading ? (
+                                                <div className="flex items-center">
+                                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Signing in...
+                                                </div>
+                                            ) : (
+                                                'Sign In to Clubify'
+                                            )}
+                                        </button>
+
+                                        {/* Divider */}
+                                        <div className="flex items-center my-6">
+                                            <div className="flex-grow border-t border-gray-300"></div>
+                                            <span className="mx-4 text-gray-500 text-sm">or continue with</span>
+                                            <div className="flex-grow border-t border-gray-300"></div>
+                                        </div>
+
+                                        {/* Google Sign In */}
+                                        <button
+                                            type="button"
+                                            onClick={handleGoogleLogin}
+                                            disabled={loading}
+                                            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg text-[#A45CFF] font-medium hover:bg-gray-50 transition-all duration-200 hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                                        >
+                                            <FaGoogle className="text-[#A45CFF]" size={25} />
+                                            Sign in with Google
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
 
-                            {/* Password Field */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <FaLock className="text-gray-400" />
+                            <div
+                                className={`transition-all duration-500 ease-in-out transform ${
+                                    !isLogin ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 absolute'
+                                } ${!isLogin ? '' : 'h-0 overflow-hidden'}`}
+                                style={{ transition: 'all 0.5s ease-in-out' }}
+                            >
+                                <div className="space-y-6">
+                                    <div className="text-center">
+                                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4">
+                                            <FaUserPlus className="text-white text-2xl" />
+                                        </div>
+                                        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
+                                            Join Clubify
+                                        </h1>
+                                        <p className="text-gray-600 mt-2">Create your account to get started</p>
                                     </div>
-                                    <input
-                                        name="password"
-                                        type="password"
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                                        placeholder="Enter your password"
-                                        required
-                                    />
+
+                                    <form onSubmit={handleRegister} className="space-y-6">
+                                        {/* Name Field */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <FaUser className="text-gray-400" />
+                                                </div>
+                                                <input
+                                                    name="name"
+                                                    type="text"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                                                    placeholder="Enter your name"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Email Field */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <FaUser className="text-gray-400" />
+                                                </div>
+                                                <input
+                                                    name="email"
+                                                    type="email"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                                                    placeholder="Enter your email"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Password Field */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <FaLock className="text-gray-400" />
+                                                </div>
+                                                <input
+                                                    name="password"
+                                                    type="password"
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                                                    placeholder="Create a password"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Register Button */}
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                                        >
+                                            {loading ? (
+                                                <div className="flex items-center">
+                                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Creating account...
+                                                </div>
+                                            ) : (
+                                                'Create Account'
+                                            )}
+                                        </button>
+
+                                        {/* Divider */}
+                                        <div className="flex items-center my-6">
+                                            <div className="flex-grow border-t border-gray-300"></div>
+                                            <span className="mx-4 text-gray-500 text-sm">or</span>
+                                            <div className="flex-grow border-t border-gray-300"></div>
+                                        </div>
+
+                                        {/* Google Sign Up */}
+                                        <button
+                                            type="button"
+                                            onClick={handleGoogleLogin}
+                                            disabled={loading}
+                                            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg text-[#A45CFF] font-medium hover:bg-gray-50 transition-all duration-200 hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                                        >
+                                            <FaGoogle className="text-[#A45CFF]" size={25} />
+                                            Sign up with Google
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Forgot Password */}
-                            <div className="flex justify-end">
-                                <a href="#" className="text-sm text-[#A45CFF] hover:text-[#7b3db4] font-medium transition-colors">
-                                    Forgot password?
-                                </a>
-                            </div>
-
-                            {/* Login Button */}
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
-                            >
-                                {loading ? (
-                                    <div className="flex items-center">
-                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Signing in...
-                                    </div>
-                                ) : (
-                                    'Sign In to Clubify'
-                                )}
-                            </button>
-
-                            {/* Divider */}
-                            <div className="flex items-center my-6">
-                                <div className="flex-grow border-t border-gray-300"></div>
-                                <span className="mx-4 text-gray-500 text-sm">or continue with</span>
-                                <div className="flex-grow border-t border-gray-300"></div>
-                            </div>
-
-                            {/* Google Sign In */}
-                            <button
-                                type="button"
-                                onClick={handleGoogleLogin}
-                                disabled={loading}
-                                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                <FaGoogle className="text-red-500" size={20} />
-                                Sign in with Google
-                            </button>
-                        </form>
-
-                        {/* Registration Link */}
-                        <div className="mt-8 text-center">
-                            <p className="text-gray-600">
-                                Don't have an account?{' '}
-                                <a
-                                    href="/register"
-                                    className="text-[#A45CFF] font-semibold hover:text-[#7b3db4] transition-colors"
+                        {/* Decorative bottom element */}
+                        <div className="bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] px-8 py-4 text-center">
+                            <p className="text-white text-sm font-medium">
+                                {isLogin ? 'New to Clubify? ' : 'Already have an account? '}
+                                <button
+                                    onClick={() => setIsLogin(!isLogin)}
+                                    className="text-white font-semibold hover:underline"
                                 >
-                                    Join Clubify Now
-                                </a>
+                                    {isLogin ? 'Join Now' : 'Sign In'}
+                                </button>
                             </p>
                         </div>
                     </div>
+
                 </div>
             </div>
 
