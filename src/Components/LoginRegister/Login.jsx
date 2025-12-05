@@ -1,7 +1,8 @@
 import { useContext, useState } from 'react';
-import { FaGoogle, FaSignInAlt, FaUser, FaLock, FaUserPlus } from 'react-icons/fa';
+import { FaGoogle, FaSignInAlt, FaUser, FaLock, FaUserPlus, FaImage } from 'react-icons/fa';
 import { AuthContext } from '../../Contexts/AuthContext';
 import { useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
 
 const Login = () => {
     const { signInUser, signInWithGoogle, createUser } = useContext(AuthContext);
@@ -10,16 +11,28 @@ const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const navigate = useNavigate();
 
-    const handleEmailLogin = async (e) => {
-        e.preventDefault();
+    // Login form using react-hook-form
+    const {
+        register: registerLogin,
+        handleSubmit: handleSubmitLogin,
+        formState: { errors: loginErrors },
+        reset: resetLogin
+    } = useForm();
+
+    // Register form using react-hook-form
+    const {
+        register: registerRegister,
+        handleSubmit: handleSubmitRegister,
+        formState: { errors: registerErrors },
+        reset: resetRegister
+    } = useForm();
+
+    const handleEmailLogin = async (data) => {
         setLoading(true);
         setShowSuccess(false);
-        const form = e.target;
-        const email = form.email.value.trim();
-        const password = form.password.value;
 
         try {
-            await signInUser(email, password);
+            await signInUser(data.email, data.password);
             setShowSuccess(true);
             toast.success('Logged in successfully.');
             setTimeout(() => navigate('/'), 2000);
@@ -30,23 +43,19 @@ const Login = () => {
         }
     };
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
+    const handleRegister = async (data) => {
         setLoading(true);
         setShowSuccess(false);
-        const form = e.target;
-        const email = form.email.value.trim();
-        const password = form.password.value;
-        const name = form.name.value;
 
         try {
-            await createUser(email, password);
+            await createUser(data.email, data.password, data.name, data.photoURL);
             setShowSuccess(true);
             toast.success('Account created successfully!');
 
-            // After registration, you might want to auto-login or redirect to login
+            // After registration, redirect to home page
             setTimeout(() => {
-                setIsLogin(true);
+                navigate('/'); // Redirect to home page
+                resetRegister(); // Reset form after successful registration
             }, 2000);
         } catch (err) {
             toast.error(err.message || 'Registration failed');
@@ -69,16 +78,25 @@ const Login = () => {
         }
     };
 
+    // Password validation function
+    const validatePassword = (password) => {
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasMinLength = password.length >= 6;
+
+        return hasUpperCase && hasLowerCase && hasMinLength;
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
             <div className="absolute inset-0 overflow-hidden z-0">
-                <div className="absolute -top- -left-40 w-80 h-80 bg-[#A45CFF] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+                <div className="absolute -top-40 -left-40 w-80 h-80 bg-[#A45CFF] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
                 <div className="absolute top-20 -right-20 w-80 h-80 bg-[#7ED8FF] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
                 <div className="absolute -bottom-20 left-1/2 w-80 h-80 bg-[#FF8FA0] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
             </div>
 
             {/* Toggle Buttons */}
-            <div className="absolute top-10 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20">
                 <div className="relative flex bg-white/20 backdrop-blur-md rounded-full p-1 border border-white/30 shadow-lg">
                     <button
                         onClick={() => setIsLogin(true)}
@@ -106,7 +124,7 @@ const Login = () => {
                     </button>
                     {/* Animated Indicator */}
                     <div
-                        className={` ${
+                        className={`absolute top-1 h-[calc(100%-0.5rem)] w-1/2 bg-white/30 backdrop-blur-sm rounded-full transition-transform duration-500 ease-in-out ${
                             isLogin ? 'translate-x-0' : 'translate-x-full'
                         }`}
                         style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
@@ -122,19 +140,19 @@ const Login = () => {
                     } ${isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
                     style={{ transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
                 >
-                    <div className="space-y-5">
+                    <div className="space-y-6">
                         <div className="text-center">
                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4 shadow-lg">
                                 <FaSignInAlt className="text-white text-2xl" />
                             </div>
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
-                                Welcome Back To Clubify!
+                                Welcome Back
                             </h1>
-                            <p className="text-gray-600 text-sm mt-1">Sign in to your Clubify account</p>
+                            <p className="text-gray-600 mt-2">Sign in to your Clubify account</p>
                         </div>
 
                         <div className="bg-white/60 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/30">
-                            <form onSubmit={handleEmailLogin} className="space-y-6">
+                            <form onSubmit={handleSubmitLogin(handleEmailLogin)} className="space-y-6">
                                 {/* Email Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
@@ -143,12 +161,22 @@ const Login = () => {
                                             <FaUser className="text-gray-400" />
                                         </div>
                                         <input
-                                            name="email"
+                                            {...registerLogin('email', {
+                                                required: 'Email is required',
+                                                pattern: {
+                                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                    message: 'Please enter a valid email address'
+                                                }
+                                            })}
                                             type="email"
-                                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                loginErrors.email ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                             placeholder="Enter your email"
-                                            required
                                         />
+                                        {loginErrors.email && (
+                                            <p className="mt-2 text-sm text-red-600">{loginErrors.email.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -160,12 +188,22 @@ const Login = () => {
                                             <FaLock className="text-gray-400" />
                                         </div>
                                         <input
-                                            name="password"
+                                            {...registerLogin('password', {
+                                                required: 'Password is required',
+                                                minLength: {
+                                                    value: 6,
+                                                    message: 'Password must be at least 6 characters'
+                                                }
+                                            })}
                                             type="password"
-                                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                loginErrors.password ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                             placeholder="Enter your password"
-                                            required
                                         />
+                                        {loginErrors.password && (
+                                            <p className="mt-2 text-sm text-red-600">{loginErrors.password.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -230,13 +268,13 @@ const Login = () => {
                                 <FaUserPlus className="text-white text-2xl" />
                             </div>
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
-                                Join Clubify!
+                                Join Clubify
                             </h1>
-                            <p className="text-gray-600 text-sm mt-1">Create your account to get started</p>
+                            <p className="text-gray-600 mt-2">Create your account to get started</p>
                         </div>
 
                         <div className="bg-white/60 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/30">
-                            <form onSubmit={handleRegister} className="space-y-6">
+                            <form onSubmit={handleSubmitRegister(handleRegister)} className="space-y-6">
                                 {/* Name Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -245,12 +283,22 @@ const Login = () => {
                                             <FaUser className="text-gray-400" />
                                         </div>
                                         <input
-                                            name="name"
+                                            {...registerRegister('name', {
+                                                required: 'Name is required',
+                                                minLength: {
+                                                    value: 2,
+                                                    message: 'Name must be at least 2 characters'
+                                                }
+                                            })}
                                             type="text"
-                                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                registerErrors.name ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                             placeholder="Enter your name"
-                                            required
                                         />
+                                        {registerErrors.name && (
+                                            <p className="mt-2 text-sm text-red-600">{registerErrors.name.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -262,12 +310,22 @@ const Login = () => {
                                             <FaUser className="text-gray-400" />
                                         </div>
                                         <input
-                                            name="email"
+                                            {...registerRegister('email', {
+                                                required: 'Email is required',
+                                                pattern: {
+                                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                    message: 'Please enter a valid email address'
+                                                }
+                                            })}
                                             type="email"
-                                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                registerErrors.email ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                             placeholder="Enter your email"
-                                            required
                                         />
+                                        {registerErrors.email && (
+                                            <p className="mt-2 text-sm text-red-600">{registerErrors.email.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -279,12 +337,51 @@ const Login = () => {
                                             <FaLock className="text-gray-400" />
                                         </div>
                                         <input
-                                            name="password"
+                                            {...registerRegister('password', {
+                                                required: 'Password is required',
+                                                validate: (value) => {
+                                                    if (!validatePassword(value)) {
+                                                        return 'Password must have at least 6 characters, one uppercase and one lowercase letter';
+                                                    }
+                                                    return true;
+                                                }
+                                            })}
                                             type="password"
-                                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                registerErrors.password ? 'border-red-500' : 'border-gray-300'
+                                            }`}
                                             placeholder="Create a password"
-                                            required
                                         />
+                                        {registerErrors.password && (
+                                            <p className="mt-2 text-sm text-red-600">{registerErrors.password.message}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Photo URL Field */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Photo URL</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <FaImage className="text-gray-400" />
+                                        </div>
+                                        <input
+                                            {...registerRegister('photoURL', {
+                                                required: false,
+                                                pattern: {
+                                                    value: /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i,
+                                                    message: 'Please enter a valid image URL'
+                                                }
+                                            })}
+                                            type="text"
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
+                                                registerErrors.photoURL ? 'border-red-500' : 'border-gray-300'
+                                            }`}
+                                            placeholder="Enter photo URL (optional)"
+                                        />
+                                        {registerErrors.photoURL && (
+                                            <p className="mt-2 text-sm text-red-600">{registerErrors.photoURL.message}</p>
+                                        )}
                                     </div>
                                 </div>
 
