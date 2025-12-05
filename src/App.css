@@ -5,6 +5,13 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: blue;
-  --color-secondary: teal;
+  --color-primary: #A45CFF;
+  --color-secondary: #7ED8FF;
+  --color-accent: #FF8FA0; 
+  --color-info: #B8B2CC;
+  --color-success: #5B5666 ;
+  --color-warning: #1C1A22;
+  --color-error: #FFB7B7;
+  --color-neutral: #6A0DAD;
+
 }

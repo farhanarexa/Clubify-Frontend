@@ -8,7 +8,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import AuthProvider from './Contexts/AuthProvider.jsx';
 import Login from './Components/LoginRegister/Login.jsx';
 import Register from './Components/LoginRegister/Register.jsx';
-import Home from './Components/Home.jsx';
+import Home from './Components/HomePage/Home.jsx';
 import PrivateRoute from './Components/LoginRegister/PrivateRoute.jsx';
 import AddClubs from './Components/AddClubs.jsx';
 import AvailableClubs from './Components/AvailableClubs.jsx';
