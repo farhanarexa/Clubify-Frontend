@@ -13,6 +13,23 @@ import AddClubs from './Components/AddClubs.jsx';
 import AvailableClubs from './Components/AvailableClubs.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// Dashboard components
+import DashboardLayout from './Components/Dashboard/DashboardLayout.jsx';
+import ProtectedRoute from './Components/Dashboard/ProtectedRoute.jsx';
+import AdminDashboard from './Components/Dashboard/Admin/AdminDashboard.jsx';
+import ManageUsers from './Components/Dashboard/Admin/ManageUsers.jsx';
+import ManageClubs from './Components/Dashboard/Admin/ManageClubs.jsx';
+import ViewPayments from './Components/Dashboard/Admin/ViewPayments.jsx';
+import ClubManagerDashboard from './Components/Dashboard/ClubManager/ClubManagerDashboard.jsx';
+import MyClubs from './Components/Dashboard/ClubManager/MyClubs.jsx';
+import ClubMembers from './Components/Dashboard/ClubManager/ClubMembers.jsx';
+import EventsManagement from './Components/Dashboard/ClubManager/EventsManagement.jsx';
+import EventRegistrations from './Components/Dashboard/ClubManager/EventRegistrations.jsx';
+import MemberDashboard from './Components/Dashboard/Member/MemberDashboard.jsx';
+import MemberMyClubs from './Components/Dashboard/Member/MyClubs.jsx';
+import MyEvents from './Components/Dashboard/Member/MyEvents.jsx';
+import PaymentHistory from './Components/Dashboard/Member/PaymentHistory.jsx';
+
 // Create a client
 const queryClient = new QueryClient();
 
@@ -37,7 +54,67 @@ const router = createBrowserRouter([
         path: "login",
         Component: Login
       },
-
+      {
+        path: "dashboard",
+        element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
+        children: [
+          // Admin routes
+          {
+            path: "admin",
+            element: <ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>
+          },
+          {
+            path: "admin/users",
+            element: <ProtectedRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoute>
+          },
+          {
+            path: "admin/clubs",
+            element: <ProtectedRoute allowedRoles={['admin']}><ManageClubs /></ProtectedRoute>
+          },
+          {
+            path: "admin/payments",
+            element: <ProtectedRoute allowedRoles={['admin']}><ViewPayments /></ProtectedRoute>
+          },
+          // Club Manager routes
+          {
+            path: "manager",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><ClubManagerDashboard /></ProtectedRoute>
+          },
+          {
+            path: "manager/clubs",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><MyClubs /></ProtectedRoute>
+          },
+          {
+            path: "manager/members",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><ClubMembers /></ProtectedRoute>
+          },
+          {
+            path: "manager/events",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><EventsManagement /></ProtectedRoute>
+          },
+          {
+            path: "manager/registrations",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><EventRegistrations /></ProtectedRoute>
+          },
+          // Member routes
+          {
+            path: "member",
+            element: <ProtectedRoute allowedRoles={['member']}><MemberDashboard /></ProtectedRoute>
+          },
+          {
+            path: "member/clubs",
+            element: <ProtectedRoute allowedRoles={['member']}><MemberMyClubs /></ProtectedRoute>
+          },
+          {
+            path: "member/events",
+            element: <ProtectedRoute allowedRoles={['member']}><MyEvents /></ProtectedRoute>
+          },
+          {
+            path: "member/payments",
+            element: <ProtectedRoute allowedRoles={['member']}><PaymentHistory /></ProtectedRoute>
+          },
+        ]
+      },
     ],
   },
 ]);
