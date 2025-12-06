@@ -3,11 +3,12 @@ import { FaGoogle, FaSignInAlt, FaUser, FaLock, FaUserPlus, FaImage } from 'reac
 import { AuthContext } from '../../Contexts/AuthContext';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const { signInUser, signInWithGoogle, createUser } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
     const navigate = useNavigate();
 
@@ -29,11 +30,9 @@ const Login = () => {
 
     const handleEmailLogin = async (data) => {
         setLoading(true);
-        setShowSuccess(false);
 
         try {
             await signInUser(data.email, data.password);
-            setShowSuccess(true);
             toast.success('Logged in successfully.');
             setTimeout(() => navigate('/'), 2000);
         } catch (err) {
@@ -45,11 +44,9 @@ const Login = () => {
 
     const handleRegister = async (data) => {
         setLoading(true);
-        setShowSuccess(false);
 
         try {
-            await createUser(data.email, data.password, data.name, data.photoURL);
-            setShowSuccess(true);
+            await createUser(data.email, data.password);
             toast.success('Account created successfully!');
 
             // After registration, redirect to home page
@@ -66,7 +63,6 @@ const Login = () => {
 
     const handleGoogleLogin = async () => {
         setLoading(true);
-        setShowSuccess(false);
         try {
             await signInWithGoogle();
             toast.success('Logged in successfully.');
@@ -142,7 +138,7 @@ const Login = () => {
                 >
                     <div className="space-y-6">
                         <div className="text-center">
-                            
+
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
                                 Welcome Back
                             </h1>
@@ -462,25 +458,6 @@ const Login = () => {
             `}</style>
         </div>
     );
-};
-
-const toast = (type, message) => {
-    let container = document.querySelector('.toast-container') || createToastContainer();
-    const el = document.createElement('div');
-    el.className = `alert alert-${type} shadow-lg p-3 rounded-md mb-2 max-w-xs`;
-    el.innerHTML = `<span>${message}</span>`;
-    container.appendChild(el);
-    setTimeout(() => el.remove(), 3000);
-};
-
-toast.success = (msg) => toast('success', msg);
-toast.error = (msg) => toast('error', msg);
-
-const createToastContainer = () => {
-    const div = document.createElement('div');
-    div.className = 'toast-container fixed top-20 right-4 z-[1000] space-y-2';
-    document.body.appendChild(div);
-    return div;
 };
 
 export default Login;
