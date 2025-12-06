@@ -2,37 +2,74 @@ import React, { useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { auth } from '../Firebase/firebase.init';
+import { userApi } from '../api/clubifyApi';
 
 const googleProvider = new GoogleAuthProvider();
-
-// Mock user roles database - In a real app, this would come from Firestore or your backend
-const mockUserRoles = {
-  'admin@example.com': 'admin',
-  'manager@example.com': 'clubManager',
-  'member@example.com': 'member',
-  // Add more mock users as needed
-};
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const createUser = async (email, password) => {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        // In a real app, you would create a user document in Firestore with default role
-        return userCredential;
+        try {
+            setError(null);
+            // Clean the email by removing any spaces
+            const cleanEmail = email.trim();
+            const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+
+            // Create user document in MongoDB with default role 'member'
+            await userApi.createUser({
+                email: cleanEmail,
+                name: cleanEmail.split('@')[0], // Use part of email as default name
+                photoURL: '',
+            });
+
+            return userCredential;
+        } catch (error) {
+            console.error('Error creating user:', error);
+            setError(error.message || 'Failed to create user');
+            throw error;
+        }
     };
 
     const signInUser = async (email, password) => {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // In a real app, you would fetch user role from Firestore
-        return userCredential;
+        try {
+            setError(null);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            return userCredential;
+        } catch (error) {
+            console.error('Error signing in user:', error);
+            setError(error.message || 'Failed to sign in');
+            throw error;
+        }
     };
 
     const signInWithGoogle = async () => {
-        const userCredential = await signInWithPopup(auth, googleProvider);
-        // In a real app, you would fetch user role from Firestore
-        return userCredential;
+        try {
+            setError(null);
+            const userCredential = await signInWithPopup(auth, googleProvider);
+
+            // Check if user exists in MongoDB, if not create with default role
+            try {
+                await userApi.getUserByEmail(userCredential.user.email);
+            } catch (error) {
+                // User doesn't exist in MongoDB, create with default role
+                if (error.response?.status === 404) {
+                    await userApi.createUser({
+                        email: userCredential.user.email,
+                        name: userCredential.user.displayName || userCredential.user.email.split('@')[0],
+                        photoURL: userCredential.user.photoURL || '',
+                    });
+                }
+            }
+
+            return userCredential;
+        } catch (error) {
+            console.error('Error signing in with Google:', error);
+            setError(error.message || 'Failed to sign in with Google');
+            throw error;
+        }
     };
 
     const signOutUser = () => {
@@ -42,16 +79,54 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
             if (authUser) {
-                // Fetch user role from mock data (or Firestore in a real app)
-                const role = mockUserRoles[authUser.email] || 'member';
+                try {
+                    setError(null);
+                    // Fetch user data from MongoDB to get the role
+                    const userData = await userApi.getUserByEmail(authUser.email);
 
-                // Update the user object with role information
-                const userWithRole = {
-                    ...authUser,
-                    role: role
-                };
+                    // Update the user object with role information from MongoDB
+                    const userWithRole = {
+                        ...authUser,
+                        role: userData.role,
+                        name: userData.name,
+                        photoURL: userData.photoURL,
+                        createdAt: userData.createdAt
+                    };
 
-                setUser(userWithRole);
+                    setUser(userWithRole);
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+
+                    // If user doesn't exist in MongoDB, create with default role
+                    if (error.response?.status === 404) {
+                        await userApi.createUser({
+                            email: authUser.email,
+                            name: authUser.displayName || authUser.email.split('@')[0],
+                            photoURL: authUser.photoURL || '',
+                        });
+
+                        // Now fetch the user data again
+                        const userData = await userApi.getUserByEmail(authUser.email);
+
+                        const userWithRole = {
+                            ...authUser,
+                            role: userData.role,
+                            name: userData.name,
+                            photoURL: userData.photoURL,
+                            createdAt: userData.createdAt
+                        };
+
+                        setUser(userWithRole);
+                    } else {
+                        // If there's a different error, set user with default role
+                        const userWithRole = {
+                            ...authUser,
+                            role: 'member'
+                        };
+
+                        setUser(userWithRole);
+                    }
+                }
             } else {
                 setUser(null);
             }
@@ -64,6 +139,7 @@ const AuthProvider = ({ children }) => {
     const authInfo = {
         user,
         loading,
+        error,
         createUser,
         signInUser,
         signInWithGoogle,
