@@ -11,7 +11,10 @@ import Home from './Components/HomePage/Home.jsx';
 import PrivateRoute from './Components/LoginRegister/PrivateRoute.jsx';
 import AddClubs from './Components/AddClubs.jsx';
 import AvailableClubs from './Components/AvailableClubs.jsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// Create a client
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -41,8 +44,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
   </StrictMode>
 )
