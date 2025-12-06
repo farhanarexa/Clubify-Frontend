@@ -138,13 +138,11 @@ const Login = () => {
                     className={`transition-all duration-700 ease-in-out transform ${
                         isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
                     } ${isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
-                    style={{ transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
+                    style={{ transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)', marginTop: '-100px' }}
                 >
                     <div className="space-y-6">
                         <div className="text-center">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4 shadow-lg">
-                                <FaSignInAlt className="text-white text-2xl" />
-                            </div>
+                            
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
                                 Welcome Back
                             </h1>
@@ -264,9 +262,6 @@ const Login = () => {
                 >
                     <div className="space-y-3">
                         <div className="text-center">
-                            <div className="inline-flex items-center justify-center mt-5 w-16 h-16 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] mb-4 shadow-lg">
-                                <FaUserPlus className="text-white text-2xl" />
-                            </div>
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
                                 Join Clubify
                             </h1>
