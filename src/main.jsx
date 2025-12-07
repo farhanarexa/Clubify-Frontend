@@ -77,7 +77,7 @@ const router = createBrowserRouter([
           },
           // Club Manager routes
           {
-            path: "manager",
+            path: "clubManager",
             element: <ProtectedRoute allowedRoles={['clubManager']}><ClubManagerDashboard /></ProtectedRoute>
           },
           {

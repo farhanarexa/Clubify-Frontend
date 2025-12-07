@@ -79,7 +79,7 @@ const Navbar = () => {
                                 )}
                                 
                                 <li>
-                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'manager' : 'member'}`} className="justify-between">
+                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'clubManager' : 'member'}`} className="justify-between">
                                         Dashboard
                                     </Link>
                                 </li>
