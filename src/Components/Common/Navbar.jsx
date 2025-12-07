@@ -23,7 +23,7 @@ const Navbar = () => {
             </li>
             <li>
                 <NavLink to="/availableclubs">Clubs</NavLink>
-            </li>    
+            </li>
         </>
     );
 
@@ -45,7 +45,7 @@ const Navbar = () => {
                         </ul>
                     </div>
                     <a className="btn btn-ghost text-3xl font-bold">
-                        Clubify 
+                        Clubify
                     </a>
                 </div>
 
@@ -64,18 +64,22 @@ const Navbar = () => {
                                 <div className="w-10 rounded-full">
                                     <img
                                         alt="Tailwind CSS Navbar component"
-                                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                        src={user.photoURL || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"} />
                                 </div>
                             </div>
                             <ul
                                 tabIndex="-1"
-                                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-100 mt-3 w-52 p-2 shadow">
                                 <li>
                                     <Link to="/addclubs" className="justify-between">
                                         Add Club
                                     </Link>
                                 </li>
-
+                                <li>
+                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'manager' : 'member'}`} className="justify-between">
+                                        Dashboard
+                                    </Link>
+                                </li>
                                 <li><Link to="/login" onClick={handleLogout}>Logout</Link></li>
                             </ul>
                         </div>
