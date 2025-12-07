@@ -70,11 +70,14 @@ const Navbar = () => {
                             <ul
                                 tabIndex="-1"
                                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-100 mt-3 w-52 p-2 shadow">
-                                <li>
-                                    <Link to="/addclubs" className="justify-between">
-                                        Add Club
-                                    </Link>
-                                </li>
+                                {(user.role === 'admin' || user.role === 'clubManager') && (
+                                    <li>
+                                        <Link to="/addclubs" className="justify-between">
+                                            Add Club
+                                        </Link>
+                                    </li>
+                                )}
+                                
                                 <li>
                                     <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'manager' : 'member'}`} className="justify-between">
                                         Dashboard
