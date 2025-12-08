@@ -114,7 +114,7 @@ const Navbar = () => {
                                     </li>
                                 )}
                                 <li>
-                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'manager' : 'member'}`} className="justify-between rounded-lg hover:bg-gray-100 text-gray-800 py-2 px-4 block">
+                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'clubManager' : 'member'}`} className="justify-between rounded-lg hover:bg-gray-100 text-gray-800 py-2 px-4 block">
                                         Dashboard
                                     </Link>
                                 </li>
