@@ -1,42 +1,80 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { eventRegistrationApi, clubApi, eventApi } from '../../../api/clubifyApi';
+import { AuthContext } from '../../../Contexts/AuthContext';
 import { FaSearch, FaUser, FaCalendarAlt, FaCheck, FaTimes } from 'react-icons/fa';
 
-// Mock data for event registrations
-const mockRegistrations = [
-  { id: 1, userEmail: 'john@example.com', eventName: 'Tech Talk: AI Trends', eventDate: '2024-01-15', status: 'registered', registeredAt: '2024-01-01' },
-  { id: 2, userEmail: 'jane@example.com', eventName: 'Tech Talk: AI Trends', eventDate: '2024-01-15', status: 'registered', registeredAt: '2024-01-02' },
-  { id: 3, userEmail: 'bob@example.com', eventName: 'Tech Talk: AI Trends', eventDate: '2024-01-15', status: 'cancelled', registeredAt: '2024-01-03' },
-  { id: 4, userEmail: 'alice@example.com', eventName: 'Monthly Fitness Meetup', eventDate: '2024-01-20', status: 'registered', registeredAt: '2024-01-05' },
-  { id: 5, userEmail: 'charlie@example.com', eventName: 'Monthly Fitness Meetup', eventDate: '2024-01-20', status: 'registered', registeredAt: '2024-01-06' },
-  { id: 6, userEmail: 'diana@example.com', eventName: 'Gaming Tournament', eventDate: '2024-01-25', status: 'registered', registeredAt: '2024-01-07' },
-  { id: 7, userEmail: 'ethan@example.com', eventName: 'Webinar: Cloud Computing', eventDate: '2024-02-05', status: 'registered', registeredAt: '2024-01-08' },
-  { id: 8, userEmail: 'fiona@example.com', eventName: 'Webinar: Cloud Computing', eventDate: '2024-02-05', status: 'registered', registeredAt: '2024-01-09' },
-];
-
-// Mock data for events
-const mockEvents = [
-  { id: 1, name: 'Tech Talk: AI Trends', date: '2024-01-15', location: 'San Francisco, CA' },
-  { id: 2, name: 'Monthly Fitness Meetup', date: '2024-01-20', location: 'Golden Gate Park, SF' },
-  { id: 3, name: 'Gaming Tournament', date: '2024-01-25', location: 'Online' },
-  { id: 4, name: 'Webinar: Cloud Computing', date: '2024-02-05', location: 'Online' },
-];
-
-// Mock function to fetch event registrations
-const fetchEventRegistrations = async () => {
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  return mockRegistrations;
-};
-
 const EventRegistrations = () => {
-  const { data: registrations, isLoading, isError, error } = useQuery({
-    queryKey: ['eventRegistrations'],
-    queryFn: fetchEventRegistrations,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  const { user } = useContext(AuthContext);
+  const [selectedEvent, setSelectedEvent] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch manager's clubs
+  const { data: managedClubs, isLoading: clubsLoading } = useQuery({
+    queryKey: ['managedClubs', user?.email],
+    queryFn: () => clubApi.getClubsByManager(user?.email),
+    enabled: !!user?.email,
   });
 
-  if (isLoading) {
+  // Fetch all events for managed clubs
+  const { data: allEvents, isLoading: eventsLoading } = useQuery({
+    queryKey: ['managerEvents', user?.email],
+    queryFn: async () => {
+      if (!managedClubs) return [];
+      const allEventsData = [];
+      for (const club of managedClubs) {
+        try {
+          const clubEvents = await eventApi.getEventsByClub(club._id);
+          allEventsData.push(...clubEvents);
+        } catch (error) {
+          // Continue even if one club fails to load events
+          continue;
+        }
+      }
+      return allEventsData;
+    },
+    enabled: !!user?.email && !!managedClubs,
+  });
+
+  // Fetch all registrations for events in managed clubs
+  const { data: allRegistrations, isLoading: registrationsLoading } = useQuery({
+    queryKey: ['managerRegistrations', user?.email],
+    queryFn: async () => {
+      if (!managedClubs) return [];
+      const allRegistrationsData = [];
+      for (const club of managedClubs) {
+        try {
+          const clubRegistrations = await eventRegistrationApi.getRegistrationsByClub(club._id);
+          allRegistrationsData.push(...clubRegistrations);
+        } catch (error) {
+          // Continue even if one club fails to load registrations
+          continue;
+        }
+      }
+      return allRegistrationsData;
+    },
+    enabled: !!user?.email && !!managedClubs,
+  });
+
+  // Filter registrations based on selected event and search term
+  let filteredRegistrations = allRegistrations || [];
+
+  // Apply event filter
+  if (selectedEvent && selectedEvent !== 'all') {
+    filteredRegistrations = filteredRegistrations.filter(reg => reg.eventId === selectedEvent);
+  }
+
+  // Apply search filter
+  if (searchTerm) {
+    filteredRegistrations = filteredRegistrations.filter(
+      reg =>
+        reg.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reg.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reg.clubName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  if (clubsLoading || eventsLoading || registrationsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
@@ -44,13 +82,11 @@ const EventRegistrations = () => {
     );
   }
 
-  if (isError) {
-    return (
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <p className="text-red-500">Error loading registrations: {error.message}</p>
-      </div>
-    );
-  }
+  // Calculate stats
+  const totalRegistrations = filteredRegistrations.length;
+  const activeRegistrations = filteredRegistrations.filter(r => r.status === 'registered').length;
+  const cancelledRegistrations = filteredRegistrations.filter(r => r.status === 'cancelled').length;
+  const totalEvents = allEvents?.length || 0;
 
   return (
     <div>
@@ -65,11 +101,13 @@ const EventRegistrations = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Select Event</label>
             <select
+              value={selectedEvent}
+              onChange={(e) => setSelectedEvent(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD]"
             >
-              <option>All Events</option>
-              {mockEvents.map(event => (
-                <option key={event.id} value={event.id}>{event.name} - {event.date}</option>
+              <option value="all">All Events</option>
+              {allEvents?.map(event => (
+                <option key={event._id} value={event._id}>{event.title} - {new Date(event.date).toLocaleDateString()}</option>
               ))}
             </select>
           </div>
@@ -80,6 +118,8 @@ const EventRegistrations = () => {
             <input
               type="text"
               placeholder="Search registrations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD]"
             />
           </div>
@@ -94,44 +134,56 @@ const EventRegistrations = () => {
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Club</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration Date</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {registrations?.map((registration) => (
-                <tr key={registration.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center text-white font-semibold">
-                        {registration.userEmail.charAt(0).toUpperCase()}
+              {filteredRegistrations?.length > 0 ? (
+                filteredRegistrations.map((registration) => (
+                  <tr key={registration._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center text-white font-semibold">
+                          {registration.userEmail.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{registration.userEmail}</div>
+                        </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{registration.userEmail}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{registration.eventName}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(registration.eventDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(registration.registeredAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      registration.status === 'registered' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {registration.status}
-                    </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{registration.eventName}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {registration.clubName}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(registration.eventDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(registration.registeredAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        registration.status === 'registered'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {registration.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                    {allRegistrations?.length === 0 ? 'No registrations found' : 'No registrations match your filters'}
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -146,7 +198,7 @@ const EventRegistrations = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Total Registrations</p>
-              <h3 className="text-2xl font-bold text-gray-800 mt-1">{registrations?.length || 0}</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mt-1">{totalRegistrations}</h3>
             </div>
           </div>
         </div>
@@ -159,7 +211,7 @@ const EventRegistrations = () => {
             <div>
               <p className="text-gray-500 text-sm">Active Registrations</p>
               <h3 className="text-2xl font-bold text-gray-800 mt-1">
-                {registrations?.filter(r => r.status === 'registered').length || 0}
+                {activeRegistrations}
               </h3>
             </div>
           </div>
@@ -173,7 +225,7 @@ const EventRegistrations = () => {
             <div>
               <p className="text-gray-500 text-sm">Cancelled</p>
               <h3 className="text-2xl font-bold text-gray-800 mt-1">
-                {registrations?.filter(r => r.status === 'cancelled').length || 0}
+                {cancelledRegistrations}
               </h3>
             </div>
           </div>
@@ -186,7 +238,7 @@ const EventRegistrations = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Events</p>
-              <h3 className="text-2xl font-bold text-gray-800 mt-1">{mockEvents.length}</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mt-1">{totalEvents}</h3>
             </div>
           </div>
         </div>
