@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { eventApi } from '../api/clubifyApi';
+import React, { useState, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { eventApi, eventRegistrationApi } from '../api/clubifyApi';
 import { clubApi } from '../api/clubifyApi';
-import { FaCalendarAlt, FaMapMarkerAlt, FaDollarSign, FaUsers, FaFilter } from 'react-icons/fa';
+import { AuthContext } from '../Contexts/AuthContext';
+import { toast } from 'react-toastify';
+import { FaCalendarAlt, FaMapMarkerAlt, FaDollarSign, FaUsers, FaFilter, FaCheck, FaUserCheck } from 'react-icons/fa';
 
 const Events = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedClub, setSelectedClub] = useState('');
+  const { user } = useContext(AuthContext);
+  const queryClient = useQueryClient();
 
   // Fetch all clubs for filtering
   const { data: allClubs, isLoading: clubsLoading } = useQuery({
@@ -21,8 +25,36 @@ const Events = () => {
     queryFn: () => eventApi.getAllEvents(),
   });
 
+  // Fetch user's existing registrations
+  const { data: userRegistrations, isLoading: registrationsLoading } = useQuery({
+    queryKey: ['userRegistrations', user?.email],
+    queryFn: () => eventRegistrationApi.getRegistrationsByUser(user?.email),
+    enabled: !!user?.email,
+  });
+
+  // Mutation for registering for an event
+  const registerForEventMutation = useMutation({
+    mutationFn: (registrationData) => {
+      return eventRegistrationApi.registerForEvent(registrationData, 'fake-token'); // In real app, use actual token
+    },
+    onSuccess: () => {
+      toast.success('Successfully registered for the event!');
+      queryClient.invalidateQueries({ queryKey: ['userRegistrations', user?.email] });
+      queryClient.invalidateQueries({ queryKey: ['allEvents'] });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.error || 'Failed to register for event');
+    }
+  });
+
   // Extract events from response
   const allEvents = allEventsResponse?.events || [];
+
+  // Check if user is already registered for an event
+  const isUserRegistered = (eventId) => {
+    if (!userRegistrations || !Array.isArray(userRegistrations)) return false;
+    return userRegistrations.some(reg => reg.eventId === eventId);
+  };
 
   // Filter and sort upcoming events
   let upcomingEvents = [];
@@ -76,7 +108,7 @@ const Events = () => {
   console.log("All clubs from API:", allClubs); // Debug log
   console.log("Unique categories:", uniqueCategories); // Debug log
 
-  if (eventsLoading || clubsLoading) {
+  if (eventsLoading || clubsLoading || registrationsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
@@ -159,6 +191,7 @@ const Events = () => {
             {upcomingEvents.map((event) => {
               // Find the club associated with this event
               const associatedClub = allClubs?.find(club => club._id === event.clubId);
+              const isRegistered = isUserRegistered(event._id);
 
               return (
                 <div key={event._id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
@@ -202,9 +235,35 @@ const Events = () => {
                         {associatedClub?.category || 'Uncategorized'}
                       </span>
 
-                      <button className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm">
-                        Register
-                      </button>
+                      {isRegistered ? (
+                        <button
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm flex items-center"
+                          disabled
+                        >
+                          <FaCheck className="mr-1" /> Registered
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => registerForEventMutation.mutate({
+                            eventId: event._id,
+                            userEmail: user?.email
+                          })}
+                          disabled={registerForEventMutation.isPending || !user}
+                          className={`${
+                            user
+                              ? 'bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] hover:opacity-90'
+                              : 'bg-gray-400 cursor-not-allowed'
+                          } text-white px-4 py-2 rounded-lg transition-opacity text-sm flex items-center`}
+                        >
+                          {registerForEventMutation.isPending ? (
+                            <span>Registering...</span>
+                          ) : (
+                            <>
+                              <FaUserCheck className="mr-1" /> Register
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
