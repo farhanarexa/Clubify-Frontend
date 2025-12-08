@@ -13,6 +13,7 @@ import AddClubs from './Components/AddClubs.jsx';
 import AvailableClubs from './Components/AvailableClubs.jsx';
 import Events from './Components/Events.jsx';
 import Profile from './Components/Profile.jsx';
+import NotFound from './Components/Common/NotFound.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Dashboard components
@@ -124,6 +125,10 @@ const router = createBrowserRouter([
             element: <ProtectedRoute allowedRoles={['member']}><PaymentHistory /></ProtectedRoute>
           },
         ]
+      },
+      {
+        path: "*",
+        element: <NotFound />
       },
     ],
   },
