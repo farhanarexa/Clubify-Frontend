@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { FaGoogle, FaSignInAlt, FaUser, FaLock, FaUserPlus, FaImage } from 'react-icons/fa';
 import { AuthContext } from '../../Contexts/AuthContext';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +10,15 @@ const Login = () => {
     const { signInUser, signInWithGoogle, createUser } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const mode = searchParams.get('mode');
+        if (mode === 'register') {
+            setIsLogin(false);
+        }
+    }, [searchParams]);
 
     // Login form using react-hook-form
     const {

@@ -24,6 +24,9 @@ const Navbar = () => {
             <li>
                 <NavLink to="/availableclubs">Clubs</NavLink>
             </li>
+            <li>
+                <NavLink to="/events">Events</NavLink>
+            </li>
         </>
     );
 
@@ -58,7 +61,6 @@ const Navbar = () => {
                     {loading ? (
                         <span className="loading loading-spinner loading-sm"></span>
                     ) : user ? (
-
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
@@ -70,6 +72,11 @@ const Navbar = () => {
                             <ul
                                 tabIndex="-1"
                                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-100 mt-3 w-52 p-2 shadow">
+                                <li>
+                                    <Link to="/profile" className="justify-between">
+                                        Profile
+                                    </Link>
+                                </li>
                                 {(user.role === 'admin' || user.role === 'clubManager') && (
                                     <li>
                                         <Link to="/addclubs" className="justify-between">
@@ -77,26 +84,30 @@ const Navbar = () => {
                                         </Link>
                                     </li>
                                 )}
-                                
                                 <li>
-                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'clubManager' : 'member'}`} className="justify-between">
+                                    <Link to={`/dashboard/${user.role === 'admin' ? 'admin' : user.role === 'clubManager' ? 'manager' : 'member'}`} className="justify-between">
                                         Dashboard
                                     </Link>
                                 </li>
                                 <li><Link to="/login" onClick={handleLogout}>Logout</Link></li>
                             </ul>
                         </div>
-
-
-                    ) :
-                        (<>
+                    ) : (
+                        <>
                             <Link
                                 to="/login"
                                 className="btn bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-7 transition-all"
                             >
                                 Login
                             </Link>
-                        </>)}
+                            <Link
+                                to="/login?mode=register"
+                                className="btn bg-gradient-to-r from-[#632EE3] to-[#9F62F2] text-white px-7 transition-all"
+                            >
+                                Register
+                            </Link>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
