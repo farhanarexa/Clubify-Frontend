@@ -7,9 +7,12 @@ import { FaUsers, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserCheck } from 're
 const MemberDashboard = () => {
     const [memberships, setMemberships] = useState([]);
     const [registrations, setRegistrations] = useState([]);
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [allUpcomingEvents, setAllUpcomingEvents] = useState([]);
+    const [filteredEvents, setFilteredEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalClubs: 0, totalEvents: 0 });
+    const [selectedFilter, setSelectedFilter] = useState('all'); // 'all', 'registered', 'notRegistered'
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
@@ -17,6 +20,44 @@ const MemberDashboard = () => {
             fetchDashboardData();
         }
     }, [user]);
+
+    useEffect(() => {
+        // Apply filtering and sorting when events, registrations, filter, or sort order change
+        if (allUpcomingEvents.length > 0 && registrations.length >= 0) {
+            let processedEvents = [...allUpcomingEvents];
+
+            // Apply filter based on selectedFilter state
+            if (selectedFilter === 'registered') {
+                processedEvents = processedEvents.filter(event =>
+                    registrations.some(reg =>
+                        reg.eventId && event._id &&
+                        reg.eventId.toString() === event._id.toString()
+                    )
+                );
+            } else if (selectedFilter === 'notRegistered') {
+                processedEvents = processedEvents.filter(event =>
+                    !registrations.some(reg =>
+                        reg.eventId && event._id &&
+                        reg.eventId.toString() === event._id.toString()
+                    )
+                );
+            }
+
+            // Apply sort based on sortOrder state
+            processedEvents.sort((a, b) => {
+                const dateA = new Date(a.eventDate || a.date);
+                const dateB = new Date(b.eventDate || b.date);
+
+                if (sortOrder === 'asc') {
+                    return dateA - dateB;
+                } else {
+                    return dateB - dateA;
+                }
+            });
+
+            setFilteredEvents(processedEvents);
+        }
+    }, [allUpcomingEvents, registrations, selectedFilter, sortOrder]);
 
     const fetchDashboardData = async () => {
         if (!user) return;
@@ -65,7 +106,7 @@ const MemberDashboard = () => {
                 new Date(a.eventDate || a.date) - new Date(b.eventDate || b.date)
             );
 
-            setUpcomingEvents(sortedEvents.slice(0, 5)); // Show only first 5 upcoming events
+            setAllUpcomingEvents(sortedEvents);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             toast.error('Failed to fetch dashboard data');
@@ -83,7 +124,7 @@ const MemberDashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Welcome Section */}
                 <div className="mb-8">
@@ -117,24 +158,48 @@ const MemberDashboard = () => {
 
                     <div className="bg-white rounded-2xl shadow-md p-6 border-l-4 border-[#4CAF50]">
                         <h3 className="text-lg font-semibold text-gray-700 mb-2">Upcoming Events</h3>
-                        <p className="text-3xl font-bold text-[#4CAF50]">{upcomingEvents.length}</p>
+                        <p className="text-3xl font-bold text-[#4CAF50]">{filteredEvents.length}</p>
                         <div className="mt-2 flex items-center text-sm text-gray-500">
                             <FaClock className="mr-1" />
-                            <span>{upcomingEvents.length} event{upcomingEvents.length !== 1 ? 's' : ''} coming up</span>
+                            <span>{filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''} coming up</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Upcoming Events from Clubs */}
                 <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <FaCalendarAlt className="mr-2 text-[#6A0DAD]" />
-                        Upcoming Events from Your Clubs
-                    </h2>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                            <FaCalendarAlt className="mr-2 text-[#6A0DAD]" />
+                            Upcoming Events from Your Clubs
+                        </h2>
+                        <div className="flex space-x-4 mt-4 md:mt-0">
+                            {/* Filter */}
+                            <select
+                                value={selectedFilter}
+                                onChange={(e) => setSelectedFilter(e.target.value)}
+                                className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD]"
+                            >
+                                <option value="all">All</option>
+                                <option value="registered">Registered</option>
+                                <option value="notRegistered">Not Registered</option>
+                            </select>
 
-                    {upcomingEvents.length > 0 ? (
+                            {/* Sort */}
+                            <select
+                                value={sortOrder}
+                                onChange={(e) => setSortOrder(e.target.value)}
+                                className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD]"
+                            >
+                                <option value="asc">Date Order (ASC)</option>
+                                <option value="desc">Date Order (DESC)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {filteredEvents.length > 0 ? (
                         <div className="space-y-6">
-                            {upcomingEvents.map((event) => {
+                            {filteredEvents.map((event) => {
                                 const eventDate = new Date(event.eventDate || event.date);
                                 const formattedDate = eventDate.toLocaleDateString('en-US', {
                                     weekday: 'long',
@@ -196,10 +261,20 @@ const MemberDashboard = () => {
                             <div className="text-gray-400 mb-4">
                                 <FaCalendarAlt className="mx-auto h-12 w-12" />
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-700 mb-2">No Upcoming Events</h3>
+                            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                                {selectedFilter === 'all'
+                                    ? 'No Upcoming Events'
+                                    : selectedFilter === 'registered'
+                                    ? 'No Registered Events'
+                                    : 'No Unregistered Events'}
+                            </h3>
                             <p className="text-gray-500">
-                                There are no upcoming events from the clubs you're part of.
-                                Check back later or discover new events!
+                                {selectedFilter === 'all'
+                                    ? 'There are no upcoming events from the clubs you\'re part of.'
+                                    : selectedFilter === 'registered'
+                                    ? 'You haven\'t registered for any upcoming events yet.'
+                                    : 'All upcoming events from your clubs are already registered.'}
+                                {' '}Check back later or discover new events!
                             </p>
                         </div>
                     )}
