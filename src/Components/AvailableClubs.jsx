@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { clubApi } from '../api/clubifyApi';
-import { membershipApi } from '../api/clubifyApi';
+import { clubApi, membershipApi } from '../api/clubifyApi';
 import { toast } from 'react-toastify';
 import { useContext } from 'react';
 import { AuthContext } from '../Contexts/AuthContext';
+import { Link } from 'react-router';
 
 const AvailableClubs = () => {
     const { user } = useContext(AuthContext);
@@ -17,8 +17,8 @@ const AvailableClubs = () => {
 
     // Categories for filtering
     const categories = [
-        'All', 'Technology', 'Arts', 'Health & Fitness', 'Food & Drink', 
-        'Outdoors', 'Photography', 'Business', 'Music', 'Education', 
+        'All', 'Technology', 'Arts', 'Health & Fitness', 'Food & Drink',
+        'Outdoors', 'Photography', 'Business', 'Music', 'Education',
         'Sports', 'Gaming', 'Travel', 'Volunteering', 'Other'
     ];
 
@@ -70,7 +70,7 @@ const AvailableClubs = () => {
                     userEmail: user.email,
                     clubId: clubId
                 }, 'fake-token'); // In real app, pass actual auth token
-                
+
                 toast.success('Successfully joined the club!');
                 fetchUserMemberships(); // Refresh user's memberships
             }
@@ -196,14 +196,14 @@ const AvailableClubs = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredClubs.map((club) => {
                             const isMember = userMemberships.some(m => m.clubId && m.clubId.toString() === club._id.toString());
-                            
+
                             return (
                                 <div key={club._id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                                     <div className="h-48 overflow-hidden">
                                         {club.bannerImage ? (
-                                            <img 
-                                                src={club.bannerImage} 
-                                                alt={club.clubName} 
+                                            <img
+                                                src={club.bannerImage}
+                                                alt={club.clubName}
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
@@ -214,7 +214,12 @@ const AvailableClubs = () => {
                                     </div>
                                     <div className="p-6">
                                         <div className="flex justify-between items-start mb-3">
-                                            <h3 className="text-xl font-bold text-gray-800">{club.clubName}</h3>
+                                            <Link
+                                                to={`/clubs/${club._id}`}
+                                                className="text-xl font-bold text-gray-800 hover:text-[#6A0DAD] transition-colors"
+                                            >
+                                                {club.clubName}
+                                            </Link>
                                             <span className="bg-[#6A0DAD]/10 text-[#6A0DAD] text-xs font-semibold px-2.5 py-0.5 rounded-full">
                                                 {club.category}
                                             </span>
@@ -236,8 +241,8 @@ const AvailableClubs = () => {
                                                 onClick={() => handleJoinClub(club._id, club.membershipFee)}
                                                 disabled={isMember}
                                                 className={`px-4 py-2 rounded-lg font-medium ${
-                                                    isMember 
-                                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                                    isMember
+                                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                                         : 'bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white hover:opacity-90 transition-opacity'
                                                 }`}
                                             >
