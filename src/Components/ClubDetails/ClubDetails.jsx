@@ -88,7 +88,7 @@ const ClubDetails = () => {
         await membershipApi.createMembership({
           userEmail: user.email,
           clubId: clubId
-        }, 'fake-token');
+        });
 
         toast.success('Successfully joined the club!');
         setIsMember(true);

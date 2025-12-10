@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { useContext } from 'react';
 import { AuthContext } from '../Contexts/AuthContext';
 import { Link } from 'react-router';
+import axios from 'axios';
+
 
 const AvailableClubs = () => {
     const { user } = useContext(AuthContext);
@@ -14,6 +16,7 @@ const AvailableClubs = () => {
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState('desc');
     const [userMemberships, setUserMemberships] = useState([]);
+    const [joiningClubs, setJoiningClubs] = useState(new Set());
 
     // Categories for filtering
     const categories = [
@@ -27,7 +30,7 @@ const AvailableClubs = () => {
         if (user) {
             fetchUserMemberships();
         }
-    }, [sortBy, sortOrder]);
+    }, [sortBy, sortOrder, user]);
 
     const fetchClubs = async () => {
         try {
@@ -59,32 +62,64 @@ const AvailableClubs = () => {
             return;
         }
 
-        try {
-            if (membershipFee > 0) {
-                // In a real app, you would redirect to a payment page here
-                toast.info(`Please proceed to payment for $${membershipFee}`);
-                // For now, just show a message - in real app you'd redirect to payment
-            } else {
-                // Free membership - create directly
-                await membershipApi.createMembership({
-                    userEmail: user.email,
-                    clubId: clubId
-                }, 'fake-token'); // In real app, pass actual auth token
+        // Prevent double-clicks
+        if (joiningClubs.has(clubId)) return;
 
-                toast.success('Successfully joined the club!');
-                fetchUserMemberships(); // Refresh user's memberships
+        // Add to joining state (show loading)
+        setJoiningClubs(prev => new Set(prev).add(clubId));
+
+        try {
+            let paymentId = null;
+
+            // If paid club, simulate payment (or integrate real payment gateway later)
+            if (membershipFee > 0) {
+                // For now, just mock a paymentId (in real app, get this from payment gateway)
+                paymentId = `pay_${Date.now()}_${clubId}`;
+                toast.info(`Processing payment of $${membershipFee}...`);
             }
+
+            // Send membership request
+            await axios.post('http://localhost:3000/memberships', {
+                userEmail: user.email,
+                clubId: clubId,
+                paymentId: paymentId || null,
+            }, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            // Success: Show toast
+            toast.success('Successfully joined the club!');
+
+            // Critical: Remove from joining state
+            setJoiningClubs(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(clubId);
+                return newSet;
+            });
+
+            // Optional: Refresh memberships so "Joined" badge appears immediately
+            fetchUserMemberships();
+
         } catch (error) {
             console.error('Error joining club:', error);
-            toast.error(error.response?.data?.error || 'Failed to join club');
+            const message = error.response?.data?.message || 'Failed to join the club';
+            toast.error(message);
+
+            // Always remove from joining state on error too
+            setJoiningClubs(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(clubId);
+                return newSet;
+            });
         }
     };
+
 
     // Filter and sort clubs
     let filteredClubs = clubs.filter(club => {
         const matchesSearch = club.clubName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             club.location.toLowerCase().includes(searchTerm.toLowerCase());
+            club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            club.location.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === '' || selectedCategory === 'All' || club.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
@@ -115,7 +150,7 @@ const AvailableClubs = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
@@ -195,7 +230,10 @@ const AvailableClubs = () => {
                 {filteredClubs.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredClubs.map((club) => {
-                            const isMember = userMemberships.some(m => m.clubId && m.clubId.toString() === club._id.toString());
+                            const isMember = userMemberships.some(m =>
+                                m.clubId && m.clubId.toString() === club._id.toString()
+                            );
+                            const isJoining = !isMember && joiningClubs.has(club._id);
 
                             return (
                                 <div key={club._id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
@@ -239,14 +277,44 @@ const AvailableClubs = () => {
                                             </div>
                                             <button
                                                 onClick={() => handleJoinClub(club._id, club.membershipFee)}
-                                                disabled={isMember}
-                                                className={`px-4 py-2 rounded-lg font-medium ${
-                                                    isMember
-                                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                disabled={isMember || isJoining}
+                                                className={`px-4 py-2 rounded-lg font-medium ${isMember
+                                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                    : isJoining
+                                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                         : 'bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white hover:opacity-90 transition-opacity'
-                                                }`}
+                                                    }`}
                                             >
-                                                {isMember ? 'Joined' : club.membershipFee > 0 ? 'Join ($)' : 'Join Free'}
+                                                {/* {isJoining ? (
+                                                    <span className="flex items-center">
+                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Joining...
+                                                    </span>
+                                                ) : isMember ? (
+                                                    'Joined'
+                                                ) : club.membershipFee > 0 ? (
+                                                    'Join ($)'
+                                                ) : (
+                                                    'Join Free'
+                                                )} */}
+                                                {isMember ? (
+                                                    'Joined ✓'
+                                                ) : isJoining ? (
+                                                    <span className="flex items-center">
+                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Joining...
+                                                    </span>
+                                                ) : club.membershipFee > 0 ? (
+                                                    'Join ($)'
+                                                ) : (
+                                                    'Join Free'
+                                                )}
                                             </button>
                                         </div>
                                     </div>

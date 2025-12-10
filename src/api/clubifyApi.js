@@ -78,16 +78,10 @@ export const userApi = {
   },
 
   // Update user role (admin only)
-  updateUserRole: async (userId, newRole, token) => {
+  updateUserRole: async (userId, newRole) => {
     try {
       const response = await api.patch(`/users/${userId}/role`,
-        { newRole },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+        { newRole }
       );
       return response.data;
     } catch (error) {
@@ -97,13 +91,9 @@ export const userApi = {
   },
 
   // Get all users (admin only)
-  getAllUsers: async (token) => {
+  getAllUsers: async () => {
     try {
-      const response = await api.get('/users', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.get('/users');
       return response.data;
     } catch (error) {
       console.error('Error getting all users:', error);
@@ -126,14 +116,9 @@ export const userApi = {
 // Club-related API calls
 export const clubApi = {
   // Create a new club
-  createClub: async (clubData, token) => {
+  createClub: async (clubData) => {
     try {
-      const response = await api.post('/clubs', clubData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post('/clubs', clubData);
       return response.data;
     } catch (error) {
       console.error('Error creating club:', error);
@@ -175,16 +160,10 @@ export const clubApi = {
   },
 
   // Update club status (admin only)
-  updateClubStatus: async (clubId, status, token) => {
+  updateClubStatus: async (clubId, status) => {
     try {
       const response = await api.patch(`/clubs/${clubId}/status`,
-        { status },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+        { status }
       );
       return response.data;
     } catch (error) {
@@ -194,17 +173,9 @@ export const clubApi = {
   },
 
   // Update club details
-  updateClub: async (clubId, updateData, token) => {
+  updateClub: async (clubId, updateData) => {
     try {
-      const response = await api.patch(`/clubs/${clubId}`,
-        updateData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await api.patch(`/clubs/${clubId}`, updateData);
       return response.data;
     } catch (error) {
       console.error('Error updating club:', error);
@@ -213,13 +184,9 @@ export const clubApi = {
   },
 
   // Delete a club
-  deleteClub: async (clubId, token) => {
+  deleteClub: async (clubId) => {
     try {
-      const response = await api.delete(`/clubs/${clubId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/clubs/${clubId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting club:', error);
@@ -231,14 +198,9 @@ export const clubApi = {
 // Event-related API calls
 export const eventApi = {
   // Create a new event
-  createEvent: async (eventData, token) => {
+  createEvent: async (eventData) => {
     try {
-      const response = await api.post('/events', eventData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post('/events', eventData);
       return response.data;
     } catch (error) {
       console.error('Error creating event:', error);
@@ -281,17 +243,9 @@ export const eventApi = {
   },
 
   // Update an event
-  updateEvent: async (eventId, updateData, token) => {
+  updateEvent: async (eventId, updateData) => {
     try {
-      const response = await api.patch(`/events/${eventId}`,
-        updateData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await api.patch(`/events/${eventId}`, updateData);
       return response.data;
     } catch (error) {
       console.error('Error updating event:', error);
@@ -300,13 +254,9 @@ export const eventApi = {
   },
 
   // Delete an event
-  deleteEvent: async (eventId, token) => {
+  deleteEvent: async (eventId) => {
     try {
-      const response = await api.delete(`/events/${eventId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/events/${eventId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -318,14 +268,9 @@ export const eventApi = {
 // Membership-related API calls
 export const membershipApi = {
   // Create a new membership
-  createMembership: async (membershipData, token) => {
+  createMembership: async (membershipData) => {
     try {
-      const response = await api.post('/memberships', membershipData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post('/memberships', membershipData);
       return response.data;
     } catch (error) {
       console.error('Error creating membership:', error);
@@ -356,17 +301,9 @@ export const membershipApi = {
   },
 
   // Update membership status
-  updateMembershipStatus: async (membershipId, status, token) => {
+  updateMembershipStatus: async (membershipId, status) => {
     try {
-      const response = await api.patch(`/memberships/${membershipId}/status`,
-        { status },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await api.patch(`/memberships/${membershipId}/status`, { status });
       return response.data;
     } catch (error) {
       console.error('Error updating membership status:', error);
@@ -375,13 +312,9 @@ export const membershipApi = {
   },
 
   // Delete a membership
-  deleteMembership: async (membershipId, token) => {
+  deleteMembership: async (membershipId) => {
     try {
-      const response = await api.delete(`/memberships/${membershipId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/memberships/${membershipId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting membership:', error);
@@ -393,14 +326,9 @@ export const membershipApi = {
 // Event registration-related API calls
 export const eventRegistrationApi = {
   // Register for an event
-  registerForEvent: async (registrationData, token) => {
+  registerForEvent: async (registrationData) => {
     try {
-      const response = await api.post('/event-registrations', registrationData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post('/event-registrations', registrationData);
       return response.data;
     } catch (error) {
       console.error('Error registering for event:', error);
@@ -442,17 +370,9 @@ export const eventRegistrationApi = {
   },
 
   // Update registration status
-  updateRegistrationStatus: async (registrationId, status, token) => {
+  updateRegistrationStatus: async (registrationId, status) => {
     try {
-      const response = await api.patch(`/event-registrations/${registrationId}/status`,
-        { status },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await api.patch(`/event-registrations/${registrationId}/status`, { status });
       return response.data;
     } catch (error) {
       console.error('Error updating registration status:', error);
@@ -461,13 +381,9 @@ export const eventRegistrationApi = {
   },
 
   // Delete a registration
-  deleteRegistration: async (registrationId, token) => {
+  deleteRegistration: async (registrationId) => {
     try {
-      const response = await api.delete(`/event-registrations/${registrationId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/event-registrations/${registrationId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting registration:', error);
@@ -479,14 +395,9 @@ export const eventRegistrationApi = {
 // Payment-related API calls
 export const paymentApi = {
   // Create a new payment
-  createPayment: async (paymentData, token) => {
+  createPayment: async (paymentData) => {
     try {
-      const response = await api.post('/payments', paymentData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post('/payments', paymentData);
       return response.data;
     } catch (error) {
       console.error('Error creating payment:', error);
@@ -506,13 +417,9 @@ export const paymentApi = {
   },
 
   // Get all payments (admin only)
-  getAllPayments: async (token) => {
+  getAllPayments: async () => {
     try {
-      const response = await api.get('/payments', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.get('/payments');
       return response.data;
     } catch (error) {
       console.error('Error getting all payments:', error);
@@ -521,17 +428,9 @@ export const paymentApi = {
   },
 
   // Update payment status
-  updatePaymentStatus: async (paymentId, status, token) => {
+  updatePaymentStatus: async (paymentId, status) => {
     try {
-      const response = await api.patch(`/payments/${paymentId}/status`,
-        { status },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await api.patch(`/payments/${paymentId}/status`, { status });
       return response.data;
     } catch (error) {
       console.error('Error updating payment status:', error);
@@ -540,13 +439,9 @@ export const paymentApi = {
   },
 
   // Get payments by club
-  getPaymentsByClub: async (clubId, token) => {
+  getPaymentsByClub: async (clubId) => {
     try {
-      const response = await api.get(`/payments/club/${clubId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.get(`/payments/club/${clubId}`);
       return response.data;
     } catch (error) {
       console.error('Error getting payments by club:', error);
