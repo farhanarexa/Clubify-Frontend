@@ -143,7 +143,7 @@ const AvailableClubs = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex justify-center items-center bg-gradient-to-b from-[#FAF8F0] to-white">
+            <div className="min-h-screen flex justify-center items-center bg-linear-to-b from-[#FAF8F0] to-white">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
             </div>
         );
@@ -282,7 +282,7 @@ const AvailableClubs = () => {
                                                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                                     : isJoining
                                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                        : 'bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white hover:opacity-90 transition-opacity'
+                                                        : 'bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white hover:opacity-90 transition-opacity'
                                                     }`}
                                             >
                                                 {/* {isJoining ? (

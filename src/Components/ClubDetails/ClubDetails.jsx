@@ -5,11 +5,13 @@ import { AuthContext } from '../../Contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaDollarSign, FaClock, FaArrowLeft, FaStar, FaUserPlus } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 const ClubDetails = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+
   const [club, setClub] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,23 +19,15 @@ const ClubDetails = () => {
   const [isJoining, setIsJoining] = useState(false);
 
   useEffect(() => {
-    if (clubId) {
-      fetchClubDetails();
-    }
+    if (clubId) fetchClubDetails();
   }, [clubId]);
 
   useEffect(() => {
-    // Check if user is already a member
-    if (user && clubId) {
-      checkMembership();
-    }
+    if (user && clubId) checkMembership();
   }, [user, clubId]);
 
   const fetchClubDetails = async () => {
     try {
-      // Fetch the specific club by ID
-      // Since there's no direct API endpoint to get club by ID with clubApi,
-      // we need to fetch all clubs and find the one with the matching ID
       const allClubs = await clubApi.getAllClubs(false);
       const foundClub = allClubs.find(c => c._id === clubId);
 
@@ -45,12 +39,11 @@ const ClubDetails = () => {
 
       setClub(foundClub);
 
-      // Fetch events for this club
       const clubEvents = await eventApi.getEventsByClub(clubId);
-      setEvents(clubEvents);
+      setEvents(clubEvents || []);
     } catch (error) {
       console.error('Error fetching club details:', error);
-      toast.error('Failed to fetch club details');
+      toast.error('Failed to load club');
       navigate('/availableclubs');
     } finally {
       setLoading(false);
@@ -58,44 +51,51 @@ const ClubDetails = () => {
   };
 
   const checkMembership = async () => {
-    if (!user) return;
-
+    if (!user) {
+      setIsMember(false);
+      return;
+    }
     try {
       const memberships = await membershipApi.getMembershipsByUser(user.email);
-      const membership = memberships.find(m => m.clubId?.toString() === clubId);
-      setIsMember(!!membership);
+      const exists = memberships.some(m => m.clubId?.toString() === clubId);
+      setIsMember(exists);
     } catch (error) {
-      console.error('Error checking membership:', error);
-      // Don't set isMember to false if there's an error during check
+      console.error('Membership check failed:', error);
     }
   };
 
   const handleJoinClub = async () => {
     if (!user) {
-      toast.error('Please log in to join a club');
+      toast.error('Login kor age');
       navigate('/login');
       return;
     }
 
-    setIsJoining(true);
-    try {
-      if (club.membershipFee > 0) {
-        // In a real app, redirect to payment page
-        toast.info(`Payment required: $${club.membershipFee}`);
-        // For now, just show the payment info - in real app you'd redirect to payment
-      } else {
-        // Free membership - create directly
-        await membershipApi.createMembership({
-          userEmail: user.email,
-          clubId: clubId
-        });
+    if (isJoining) return;
 
-        toast.success('Successfully joined the club!');
-        setIsMember(true);
+    setIsJoining(true);
+
+    try {
+      let paymentId = null;
+
+      if (club.membershipFee > 0) {
+        paymentId = `pay_${Date.now()}_${clubId}`;
+        toast.info(`Processing $${club.membershipFee} payment...`, { autoClose: 2500 });
+        await new Promise(r => setTimeout(r, 1500)); // Fake delay for realism
       }
+
+      await axios.post('http://localhost:3000/memberships', {
+        userEmail: user.email,
+        clubId: clubId,
+        paymentId: paymentId,
+      });
+
+      toast.success('Successfully joined the club!');
+      setIsMember(true); // Instant update
+
     } catch (error) {
-      console.error('Error joining club:', error);
-      toast.error(error.response?.data?.error || 'Failed to join club');
+      console.error('Join failed:', error);
+      toast.error(error.response?.data?.message || 'Join korar somoy error hoise');
     } finally {
       setIsJoining(false);
     }
@@ -103,18 +103,18 @@ const ClubDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
+      <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#6A0DAD]"></div>
       </div>
     );
   }
 
   if (!club) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white flex justify-center items-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800">Club not found</h2>
-          <Link to="/availableclubs" className="text-[#6A0DAD] hover:underline mt-4 inline-block">
+          <h2 className="text-3xl font-bold text-gray-800">Club not found</h2>
+          <Link to="/availableclubs" className="text-[#6A0DAD] text-xl mt-4 inline-block hover:underline">
             Back to Clubs
           </Link>
         </div>
@@ -122,35 +122,30 @@ const ClubDetails = () => {
     );
   }
 
-  // Filter upcoming events
-  const now = new Date();
-  const upcomingEvents = events.filter(event => {
-    const eventDate = new Date(event.eventDate || event.date);
-    return eventDate > now;
-  });
+  const upcomingEvents = events
+    .filter(e => new Date(e.eventDate || e.date) > new Date())
+    .sort((a, b) => new Date(a.eventDate || a.date) - new Date(b.eventDate || b.date));
 
-  // Sort events by date (earliest first)
-  const sortedUpcomingEvents = upcomingEvents.sort((a, b) =>
-    new Date(a.eventDate || a.date) - new Date(b.eventDate || b.date)
-  );
-
-  // Format date and time
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
+
+  const formatTime = (dateStr) => {
+    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-8 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-8 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-6xl mx-auto">
         {/* Back Button */}
@@ -166,7 +161,7 @@ const ClubDetails = () => {
 
         {/* Club Header */}
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden mb-8">
-          <div className="h-64 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] relative">
+          <div className="h-64 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] relative">
             {club.bannerImage ? (
               <img
                 src={club.bannerImage}
@@ -222,7 +217,7 @@ const ClubDetails = () => {
               </div>
 
               <div className="lg:ml-8">
-                <div className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-2xl p-6 text-white text-center">
+                <div className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-2xl p-6 text-white text-center">
                   <h3 className="text-lg font-semibold mb-2">
                     {isMember ? 'Member' : 'Join Club'}
                   </h3>
@@ -235,11 +230,10 @@ const ClubDetails = () => {
                   <button
                     onClick={handleJoinClub}
                     disabled={isMember || isJoining}
-                    className={`w-full py-3 px-6 rounded-lg font-medium transition-all ${
-                      isMember
+                    className={`w-full py-3 px-6 rounded-lg font-medium transition-all ${isMember
                         ? 'bg-green-600 cursor-not-allowed'
                         : 'bg-white text-[#6A0DAD] hover:bg-opacity-90 hover:text-white hover:bg-[#6A0DAD]'
-                    }`}
+                      }`}
                   >
                     {isJoining ? (
                       <div className="flex items-center justify-center">
@@ -272,13 +266,13 @@ const ClubDetails = () => {
                   Upcoming Events
                 </h2>
                 <span className="bg-[#6A0DAD]/10 text-[#6A0DAD] px-3 py-1 rounded-full text-sm font-medium">
-                  {sortedUpcomingEvents.length} {sortedUpcomingEvents.length === 1 ? 'Event' : 'Events'}
+                  {upcomingEvents.length} {upcomingEvents.length === 1 ? 'Event' : 'Events'}
                 </span>
               </div>
 
-              {sortedUpcomingEvents.length > 0 ? (
+              {upcomingEvents.length > 0 ? (
                 <div className="space-y-4">
-                  {sortedUpcomingEvents.map((event) => {
+                  {upcomingEvents.map((event) => {
                     const eventDate = new Date(event.eventDate || event.date);
                     const formattedDate = formatDate(event.eventDate || event.date);
                     const formattedTime = eventDate.toLocaleTimeString('en-US', {
@@ -305,9 +299,8 @@ const ClubDetails = () => {
                             </div>
                           </div>
                           <div className="flex flex-col items-start md:items-end">
-                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                              event.isPaid ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${event.isPaid ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                              }`}>
                               {event.isPaid ? `Paid - $${event.eventFee || 0}` : 'Free'}
                             </span>
                             <span className="text-gray-500 mt-2 text-sm">
@@ -375,11 +368,10 @@ const ClubDetails = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-700">Status</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      club.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${club.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                      }`}>
                       {club.status}
                     </span>
                   </div>
