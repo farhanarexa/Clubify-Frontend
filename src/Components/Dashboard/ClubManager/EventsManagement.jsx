@@ -50,7 +50,7 @@ const EventsManagement = () => {
   // Mutation for creating an event
   const createEventMutation = useMutation({
     mutationFn: (eventData) => {
-      return eventApi.createEvent(eventData, 'fake-token'); // In real app, use actual token
+      return eventApi.createEvent(eventData);
     },
     onSuccess: () => {
       toast.success('Event created successfully!');
@@ -58,14 +58,14 @@ const EventsManagement = () => {
       setShowCreateForm(false);
     },
     onError: (error) => {
-      toast.error(error.response?.data?.error || 'Failed to create event');
+      toast.error('Failed to create event');
     }
   });
 
   // Mutation for updating an event
   const updateEventMutation = useMutation({
     mutationFn: ({ eventId, updateData }) => {
-      return eventApi.updateEvent(eventId, updateData, 'fake-token'); // In real app, use actual token
+      return eventApi.updateEvent(eventId, updateData);
     },
     onSuccess: () => {
       toast.success('Event updated successfully!');
@@ -73,21 +73,21 @@ const EventsManagement = () => {
       setEditingEvent(null);
     },
     onError: (error) => {
-      toast.error(error.response?.data?.error || 'Failed to update event');
+      toast.error('Failed to update event');
     }
   });
 
   // Mutation for deleting an event
   const deleteEventMutation = useMutation({
     mutationFn: (eventId) => {
-      return eventApi.deleteEvent(eventId, 'fake-token'); // In real app, use actual token
+      return eventApi.deleteEvent(eventId);
     },
     onSuccess: () => {
       toast.success('Event deleted successfully!');
       queryClient.invalidateQueries({ queryKey: ['managerEvents', user?.email] });
     },
     onError: (error) => {
-      toast.error(error.response?.data?.error || 'Failed to delete event');
+      toast.error('Failed to delete event');
     }
   });
 
@@ -111,10 +111,16 @@ const EventsManagement = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
     const onSubmit = (data) => {
-      // Convert date to proper format if needed
+      // Convert date to proper format for backend
       const eventData = {
-        ...data,
-        date: data.date ? new Date(data.date).toISOString() : null
+        clubId: data.clubId,
+        title: data.title,
+        description: data.description,
+        eventDate: data.date ? new Date(data.date).toISOString() : null,
+        location: data.location,
+        isPaid: data.isPaid === 'true', // Convert string to boolean
+        eventFee: parseFloat(data.eventFee) || 0,
+        maxAttendees: parseInt(data.maxAttendees) || null
       };
 
       handleCreateEvent(eventData);
@@ -301,7 +307,7 @@ const EventsManagement = () => {
         title: editingEvent?.title || '',
         description: editingEvent?.description || '',
         clubId: editingEvent?.clubId ? editingEvent.clubId.toString() : '',
-        date: editingEvent?.date ? new Date(editingEvent.date).toISOString().slice(0, 16) : '',
+        date: editingEvent?.eventDate ? new Date(editingEvent.eventDate).toISOString().slice(0, 16) : editingEvent?.date ? new Date(editingEvent.date).toISOString().slice(0, 16) : '',
         location: editingEvent?.location || '',
         isPaid: editingEvent?.isPaid?.toString() || 'false',
         eventFee: editingEvent?.eventFee || 0,
@@ -310,12 +316,16 @@ const EventsManagement = () => {
     });
 
     const onSubmit = (data) => {
-      // Prepare data for backend API, ensuring date format is correct - don't send clubId as it should not change
-      const { clubId, ...eventData } = data; // Exclude clubId from update data
+      // Prepare data for backend API with proper field mapping
       const updateData = {
-        ...eventData,
-        date: data.date ? new Date(data.date).toISOString() : editingEvent.date,
-        // Don't include clubId in update data since it should remain unchanged
+        title: data.title,
+        description: data.description,
+        eventDate: data.date ? new Date(data.date).toISOString() : editingEvent.eventDate,
+        location: data.location,
+        isPaid: data.isPaid === 'true', // Convert string to boolean
+        eventFee: parseFloat(data.eventFee) || 0,
+        maxAttendees: parseInt(data.maxAttendees) || null,
+        updatedAt: new Date()
       };
 
       handleUpdateEvent(updateData);
@@ -365,6 +375,7 @@ const EventsManagement = () => {
                 className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
                   errors.clubId ? 'border-red-500' : 'border-gray-300'
                 }`}
+                disabled // Club should not be changed after creation
               >
                 <option value="">Select a club</option>
                 {managedClubs?.map(club => (

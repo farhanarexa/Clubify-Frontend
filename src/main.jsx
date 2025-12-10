@@ -15,7 +15,7 @@ import Events from './Components/Events.jsx';
 import Profile from './Components/Profile.jsx';
 import NotFound from './Components/Common/NotFound.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import ClubDetails from './Components/ClubDetails/ClubDetails.jsx';
+import ClubDetailsPublic from './Components/ClubDetails/ClubDetails.jsx';
 
 // Dashboard components
 import DashboardLayout from './Components/Dashboard/DashboardLayout.jsx';
@@ -29,6 +29,7 @@ import MyClubs from './Components/Dashboard/ClubManager/MyClubs.jsx';
 import ClubMembers from './Components/Dashboard/ClubManager/ClubMembers.jsx';
 import EventsManagement from './Components/Dashboard/ClubManager/EventsManagement.jsx';
 import EventRegistrations from './Components/Dashboard/ClubManager/EventRegistrations.jsx';
+import ClubDetailsClubManager from './Components/Dashboard/ClubManager/ClubDetails.jsx';
 import MemberDashboard from './Components/Dashboard/Member/MemberDashboard.jsx';
 import MemberMyClubs from './Components/Dashboard/Member/MyClubs.jsx';
 import MyEvents from './Components/Dashboard/Member/MyEvents.jsx';
@@ -56,7 +57,7 @@ const router = createBrowserRouter([
       },
       {
         path: "clubs/:clubId",
-        Component: ClubDetails
+        Component: ClubDetailsPublic
       },
       {
         path: "profile",
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
           {
             path: "manager/clubs",
             element: <ProtectedRoute allowedRoles={['clubManager']}><MyClubs /></ProtectedRoute>
+          },
+          {
+            path: "manager/clubs/:clubId",
+            element: <ProtectedRoute allowedRoles={['clubManager']}><ClubDetailsClubManager /></ProtectedRoute>
           },
           {
             path: "manager/members",

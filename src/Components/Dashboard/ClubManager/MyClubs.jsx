@@ -10,6 +10,7 @@ const MyClubs = () => {
     const [clubs, setClubs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
+    const [editingClub, setEditingClub] = useState(null);
     const [formData, setFormData] = useState({
         clubName: '',
         description: '',
@@ -20,8 +21,8 @@ const MyClubs = () => {
     });
 
     const categories = [
-        'Technology', 'Arts', 'Health & Fitness', 'Food & Drink', 
-        'Outdoors', 'Photography', 'Business', 'Music', 'Education', 
+        'Technology', 'Arts', 'Health & Fitness', 'Food & Drink',
+        'Outdoors', 'Photography', 'Business', 'Music', 'Education',
         'Sports', 'Gaming', 'Travel', 'Volunteering', 'Other'
     ];
 
@@ -34,7 +35,20 @@ const MyClubs = () => {
     const fetchClubs = async () => {
         try {
             const response = await clubApi.getClubsByManager(user.email);
-            setClubs(response);
+            // Add member counts to each club
+            const clubsWithMemberCounts = await Promise.all(
+                response.map(async (club) => {
+                    try {
+                        const members = await membershipApi.getMembershipsByClub(club._id);
+                        const activeMembers = members.filter(m => m.status === 'active').length;
+                        return { ...club, memberCount: activeMembers };
+                    } catch (error) {
+                        console.error(`Error fetching members for club ${club._id}:`, error);
+                        return { ...club, memberCount: 0 };
+                    }
+                })
+            );
+            setClubs(clubsWithMemberCounts);
         } catch (error) {
             console.error('Error fetching clubs:', error);
             toast.error('Failed to fetch clubs');
@@ -46,13 +60,21 @@ const MyClubs = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // In a real app, you'd pass an auth token here
-            await clubApi.createClub({
-                ...formData,
-                email: user.email
-            }, 'fake-token'); // Replace with actual token
-            toast.success('Club created successfully!');
-            setShowForm(false);
+            if (editingClub) {
+                // Update existing club
+                await clubApi.updateClub(editingClub._id, formData);
+                toast.success('Club updated successfully!');
+                setEditingClub(null);
+            } else {
+                // Create new club
+                await clubApi.createClub({
+                    ...formData,
+                    email: user.email
+                });
+                toast.success('Club created successfully!');
+                setShowForm(false);
+            }
+
             setFormData({
                 clubName: '',
                 description: '',
@@ -63,8 +85,8 @@ const MyClubs = () => {
             });
             fetchClubs(); // Refresh the list
         } catch (error) {
-            console.error('Error creating club:', error);
-            toast.error(error.response?.data?.error || 'Failed to create club');
+            console.error('Error submitting club:', error);
+            toast.error(error.response?.data?.error || 'Failed to submit club');
         }
     };
 
@@ -72,6 +94,32 @@ const MyClubs = () => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
+        });
+    };
+
+    const handleEditClub = (club) => {
+        setEditingClub(club);
+        setFormData({
+            clubName: club.clubName || '',
+            description: club.description || '',
+            category: club.category || '',
+            location: club.location || '',
+            bannerImage: club.bannerImage || '',
+            membershipFee: club.membershipFee || 0
+        });
+        setShowForm(true);
+    };
+
+    const handleCancelForm = () => {
+        setShowForm(false);
+        setEditingClub(null);
+        setFormData({
+            clubName: '',
+            description: '',
+            category: '',
+            location: '',
+            bannerImage: '',
+            membershipFee: 0
         });
     };
 
@@ -92,7 +140,10 @@ const MyClubs = () => {
                         <p className="text-gray-600">Manage your clubs</p>
                     </div>
                     <button
-                        onClick={() => setShowForm(!showForm)}
+                        onClick={() => {
+                            setEditingClub(null);
+                            setShowForm(!showForm);
+                        }}
                         className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
                     >
                         {showForm ? 'Cancel' : '+ Add New Club'}
@@ -100,10 +151,12 @@ const MyClubs = () => {
                 </div>
             </div>
 
-            {/* Add Club Form */}
+            {/* Add/Edit Club Form */}
             {showForm && (
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Create New Club</h2>
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">
+                        {editingClub ? `Edit Club: ${editingClub.clubName}` : 'Create New Club'}
+                    </h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -186,12 +239,19 @@ const MyClubs = () => {
                                 placeholder="https://example.com/image.jpg"
                             />
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex gap-2">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
+                                className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
                             >
-                                Create Club
+                                {editingClub ? 'Update Club' : 'Create Club'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCancelForm}
+                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                            >
+                                Cancel
                             </button>
                         </div>
                     </form>
@@ -206,8 +266,8 @@ const MyClubs = () => {
                         <p className="text-gray-600 mb-2 line-clamp-2">{club.description}</p>
                         <div className="flex justify-between items-center mt-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                                ${club.status === 'approved' ? 'bg-green-100 text-green-800' : 
-                                  club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                ${club.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                  club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                   'bg-red-100 text-red-800'}`}>
                                 {club.status}
                             </span>
@@ -218,12 +278,23 @@ const MyClubs = () => {
                         <div className="mt-4 pt-4 border-t border-gray-200">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Members:</span>
-                                <span className="font-medium">0</span>
+                                <span className="font-medium">{club.memberCount}</span>
                             </div>
                         </div>
-                        <button className="w-full mt-4 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
-                            Manage
-                        </button>
+                        <div className="flex gap-2 mt-4">
+                            <button
+                                onClick={() => handleEditClub(club)}
+                                className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                            >
+                                Edit
+                            </button>
+                            <a
+                                href={`/dashboard/manager/clubs/${club._id}`}
+                                className="flex-1 border border-[#6A0DAD] text-[#6A0DAD] px-4 py-2 rounded-lg hover:bg-[#6A0DAD]/10 transition-colors text-center flex items-center justify-center"
+                            >
+                                Manage
+                            </a>
+                        </div>
                     </div>
                 ))}
             </div>

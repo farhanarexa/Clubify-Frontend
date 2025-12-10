@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router';
+import { Link, Outlet } from 'react-router-dom';
 
 const DashboardLayout = () => {
     return (
@@ -11,26 +11,26 @@ const DashboardLayout = () => {
                 </div>
 
                 <nav className="space-y-2">
-                    <Link 
-                        to="/dashboard/member" 
+                    <Link
+                        to="/dashboard/member"
                         className="block px-4 py-2 rounded-lg bg-white/10"
                     >
                         Dashboard
                     </Link>
-                    <Link 
-                        to="/dashboard/member/clubs" 
+                    <Link
+                        to="/dashboard/member/my-clubs"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         My Clubs
                     </Link>
-                    <Link 
-                        to="/dashboard/member/events" 
+                    <Link
+                        to="/dashboard/member/my-events"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         My Events
                     </Link>
-                    <Link 
-                        to="/dashboard/member/payments" 
+                    <Link
+                        to="/dashboard/member/payment-history"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         Payment History
@@ -40,7 +40,7 @@ const DashboardLayout = () => {
 
             {/* Mobile sidebar */}
             <div className="lg:hidden fixed inset-0 z-50 bg-black/50"></div>
-            
+
             {/* Main content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top bar */}
@@ -54,7 +54,7 @@ const DashboardLayout = () => {
                             </button>
                         </div>
                         <h2 className="text-lg font-semibold text-gray-800">Member Dashboard</h2>
-                        
+
                         <div className="flex items-center space-x-4">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
                                 U
