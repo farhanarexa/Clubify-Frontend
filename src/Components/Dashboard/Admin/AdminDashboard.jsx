@@ -263,7 +263,7 @@ const AdminDashboard = () => {
 
                   // Get club names for each club ID
                   const clubMembershipData = clubsSummary.map(club => ({
-                    label: club.clubName,
+                    label: club.clubName || 'Unknown Club',
                     value: membershipCounts[club._id] || 0
                   })).filter(item => item.value > 0).sort((a, b) => b.value - a.value).slice(0, 5); // Top 5 clubs
 

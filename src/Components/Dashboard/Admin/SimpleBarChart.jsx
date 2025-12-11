@@ -11,18 +11,18 @@ const SimpleBarChart = ({ data, title, color = '#6A0DAD' }) => {
 
   // Find max value to scale bars
   const maxValue = Math.max(...data.map(item => item.value));
-  
+
   return (
     <div className="p-4">
       <h4 className="text-center font-medium text-gray-700 mb-4">{title}</h4>
       <div className="space-y-4">
         {data.map((item, index) => (
           <div key={index} className="flex items-center">
-            <div className="w-24 text-sm text-gray-600 truncate">{item.label}</div>
+            <div className="w-24 text-sm text-gray-600 truncate">{item.label || 'N/A'}</div>
             <div className="flex-1 flex items-center ml-2">
-              <div 
-                className="h-6 rounded" 
-                style={{ 
+              <div
+                className="h-6 rounded"
+                style={{
                   width: `${(item.value / maxValue) * 100}%`,
                   backgroundColor: color
                 }}

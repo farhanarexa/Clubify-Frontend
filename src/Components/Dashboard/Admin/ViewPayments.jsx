@@ -32,13 +32,13 @@ const ViewPayments = () => {
 
   // Filter payments based on search term and selected filters
   const filteredPayments = payments?.filter(payment => {
-    const matchesSearch = payment.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payment.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payment.clubName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payment.eventName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (payment.userEmail || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (payment.userName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (payment.clubName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (payment.eventName || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = !selectedStatus || payment.status === selectedStatus;
     const matchesType = !selectedType || payment.type === selectedType;
-    
+
     return matchesSearch && matchesStatus && matchesType;
   }) || [];
 

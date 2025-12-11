@@ -50,8 +50,8 @@ const ManageClubs = () => {
 
   // Filter clubs based on search term and selected status
   const filteredClubs = clubs?.filter(club => {
-    const matchesSearch = club.clubName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         club.managerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (club.clubName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (club.managerEmail || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = !selectedStatus || club.status === selectedStatus;
     return matchesSearch && matchesStatus;
   }) || [];

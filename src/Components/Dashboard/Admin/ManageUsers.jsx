@@ -49,8 +49,8 @@ const ManageUsers = () => {
 
   // Filter users based on search term and selected role
   const filteredUsers = users?.filter(user => {
-    const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (user.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (user.name || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = !selectedRole || user.role === selectedRole;
     return matchesSearch && matchesRole;
   }) || [];
