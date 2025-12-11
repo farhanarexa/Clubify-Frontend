@@ -1,6 +1,7 @@
 // api/clubifyApi.js
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { auth } from '../Firebase/firebase.init';
 
 const API_BASE_URL = 'http://localhost:3000'; // Update this to match your backend URL
 
@@ -10,7 +11,28 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Add request interceptor for error handling
+// Add request interceptor to include Firebase token
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      // Get the current user's Firebase token
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    } catch (error) {
+      console.error('Error getting Firebase token:', error);
+      return config;
+    }
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for error handling
 api.interceptors.response.use(
   (response) => {
     return response;
@@ -126,10 +148,19 @@ export const clubApi = {
     }
   },
 
-  // Get all clubs
-  getAllClubs: async (isAdmin = false) => {
+  // Get all clubs with search, filter, and sorting
+  getAllClubs: async (options = {}) => {
     try {
-      const response = await api.get(`/clubs${isAdmin ? '?admin=true' : ''}`);
+      const { isAdmin = false, search, category, sortBy } = options;
+      const params = new URLSearchParams();
+
+      if (isAdmin) params.append('admin', 'true');
+      if (search) params.append('search', search);
+      if (category) params.append('category', category);
+      if (sortBy) params.append('sortBy', sortBy);
+
+      const paramString = params.toString();
+      const response = await api.get(`/clubs${paramString ? `?${paramString}` : ''}`);
       return response.data;
     } catch (error) {
       console.error('Error getting clubs:', error);
@@ -137,17 +168,21 @@ export const clubApi = {
     }
   },
 
-  // Get clubs by status
-  getClubsByStatus: async (status) => {
+  // Get clubs by status with search and filter
+  getClubsByStatus: async (status, options = {}) => {
     try {
-      // If status is 'all', get all clubs (admin view)
-      if (status === 'all') {
-        const response = await api.get('/clubs?admin=true');
-        return response.data;
-      } else {
-        const response = await api.get(`/clubs/status/${status}`);
-        return response.data;
-      }
+      const { search, category } = options;
+      const params = new URLSearchParams();
+
+      if (search) params.append('search', search);
+      if (category) params.append('category', category);
+
+      const paramString = params.toString();
+      let url = `/clubs/status/${status}`;
+      if (paramString) url += `?${paramString}`;
+
+      const response = await api.get(url);
+      return response.data;
     } catch (error) {
       console.error('Error getting clubs by status:', error);
       throw error;
