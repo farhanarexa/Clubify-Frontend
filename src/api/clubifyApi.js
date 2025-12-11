@@ -140,8 +140,14 @@ export const clubApi = {
   // Get clubs by status
   getClubsByStatus: async (status) => {
     try {
-      const response = await api.get(`/clubs/status/${status}`);
-      return response.data;
+      // If status is 'all', get all clubs (admin view)
+      if (status === 'all') {
+        const response = await api.get('/clubs?admin=true');
+        return response.data;
+      } else {
+        const response = await api.get(`/clubs/status/${status}`);
+        return response.data;
+      }
     } catch (error) {
       console.error('Error getting clubs by status:', error);
       throw error;
