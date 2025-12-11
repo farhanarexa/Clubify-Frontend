@@ -45,7 +45,13 @@ const EventRegistrations = () => {
       for (const club of managedClubs) {
         try {
           const clubRegistrations = await eventRegistrationApi.getRegistrationsByClub(club._id);
-          allRegistrationsData.push(...clubRegistrations);
+          // Add club information to each registration
+          const enrichedRegistrations = clubRegistrations.map(reg => ({
+            ...reg,
+            clubId: club._id,
+            clubName: club.clubName // Add the club name directly to each registration
+          }));
+          allRegistrationsData.push(...enrichedRegistrations);
         } catch (error) {
           // Continue even if one club fails to load registrations
           continue;
@@ -56,8 +62,66 @@ const EventRegistrations = () => {
     enabled: !!user?.email && !!managedClubs,
   });
 
+  // Fetch event details for each registration to get event date
+  const { data: eventDetailsMap, isLoading: eventDetailsLoading } = useQuery({
+    queryKey: ['eventDetails', allRegistrations],
+    queryFn: async () => {
+      if (!allRegistrations) return {};
+
+      const eventDetails = {};
+      const uniqueEventIds = [...new Set(allRegistrations.map(reg => reg.eventId))].filter(Boolean);
+
+      for (const eventId of uniqueEventIds) {
+        try {
+          const eventDetailsData = await eventApi.getEventById(eventId);
+          eventDetails[eventId] = eventDetailsData;
+        } catch (error) {
+          // If event details fail to load, continue with other events
+          continue;
+        }
+      }
+      return eventDetails;
+    },
+    enabled: !!allRegistrations?.length,
+    refetchOnWindowFocus: false, // Avoid unnecessary refetches
+  });
+
+  // Create club details map from the already fetched managed clubs
+  const clubDetailsMap = React.useMemo(() => {
+    const map = {};
+    if (managedClubs) {
+      managedClubs.forEach(club => {
+        map[club._id] = club;
+      });
+    }
+    return map;
+  }, [managedClubs]);
+
+  // Combine registration data with event and club details
+  const enrichedRegistrations = React.useMemo(() => {
+    if (!allRegistrations) return [];
+
+    return allRegistrations.map(registration => {
+      const eventDetails = eventDetailsMap?.[registration.eventId];
+      // The registration object should have clubId from getRegistrationsByClub API
+      const clubDetails = clubDetailsMap?.[registration.clubId];
+
+      // If club name is not in the registration object, use the club details map
+      let clubName = registration.clubName;
+      if (!clubName) {
+        clubName = clubDetails?.clubName;
+      }
+
+      return {
+        ...registration,
+        eventDate: eventDetails?.eventDate || eventDetails?.date,
+        clubName: clubName || 'N/A'
+      };
+    });
+  }, [allRegistrations, eventDetailsMap, clubDetailsMap]);
+
   // Filter registrations based on selected event and search term
-  let filteredRegistrations = allRegistrations || [];
+  let filteredRegistrations = enrichedRegistrations || [];
 
   // Apply event filter
   if (selectedEvent && selectedEvent !== 'all') {
@@ -74,7 +138,7 @@ const EventRegistrations = () => {
     );
   }
 
-  if (clubsLoading || eventsLoading || registrationsLoading) {
+  if (clubsLoading || eventsLoading || registrationsLoading || eventDetailsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
