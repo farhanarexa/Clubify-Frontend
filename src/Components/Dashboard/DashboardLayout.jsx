@@ -103,21 +103,21 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar for large screens */}
-      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-[#6A0DAD] to-[#9F62F2] text-white transition-transform duration-300 ease-in-out transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
+      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-linear-to-b from-[#6A0DAD] to-[#9F62F2] text-white transition-transform duration-300 ease-in-out transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-between p-4 border-b border-white/20">
           <h1 className="text-xl font-bold">Clubify Dashboard</h1>
-          <button 
-            onClick={() => setSidebarOpen(false)} 
+          <button
+            onClick={() => setSidebarOpen(false)}
             className="lg:hidden text-white hover:text-gray-200"
           >
             <FaTimes size={20} />
           </button>
         </div>
-        
+
         <div className="flex flex-col h-full pt-4 pb-20 overflow-y-auto">
           <div className="px-4 mb-6">
             <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-linear-to-r from-[#A45CFF] to-[#7ED8FF] flex items-center justify-center">
                 <FaUser className="text-white" />
               </div>
               <div>
@@ -126,25 +126,24 @@ const DashboardLayout = () => {
               </div>
             </div>
           </div>
-          
+
           <nav className="flex-1 px-2 space-y-1">
             {navigationItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  location.pathname === item.path
+                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${location.pathname === item.path
                     ? 'bg-white/20 text-white'
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
+                  }`}
               >
                 <span className="mr-3">{item.icon}</span>
                 <span className="text-sm font-medium">{item.name}</span>
               </Link>
             ))}
           </nav>
-          
+
           <div className="px-4 pt-4 border-t border-white/20">
             <button
               onClick={handleLogout}
@@ -159,7 +158,7 @@ const DashboardLayout = () => {
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-20 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         ></div>
@@ -181,10 +180,10 @@ const DashboardLayout = () => {
                 {userRole} Dashboard
               </h2>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
                   {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
                 <span className="hidden md:block text-sm font-medium text-gray-700">

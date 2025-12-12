@@ -231,8 +231,8 @@ const ClubDetails = () => {
                     onClick={handleJoinClub}
                     disabled={isMember || isJoining}
                     className={`w-full py-3 px-6 rounded-lg font-medium transition-all ${isMember
-                        ? 'bg-green-600 cursor-not-allowed'
-                        : 'bg-white text-[#6A0DAD] hover:bg-opacity-90 hover:text-white hover:bg-[#6A0DAD]'
+                      ? 'bg-green-600 cursor-not-allowed'
+                      : 'bg-white text-[#6A0DAD] hover:bg-opacity-90 hover:text-white hover:bg-[#6A0DAD]'
                       }`}
                   >
                     {isJoining ? (
@@ -369,8 +369,8 @@ const ClubDetails = () => {
                   <div>
                     <h3 className="font-semibold text-gray-700">Status</h3>
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${club.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                      club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
                       }`}>
                       {club.status}
                     </span>
@@ -384,7 +384,7 @@ const ClubDetails = () => {
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Manager Information</h2>
 
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                <div className="w-12 h-12 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
                   {club.managerEmail?.charAt(0).toUpperCase()}
                 </div>
                 <div>

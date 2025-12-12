@@ -136,9 +136,8 @@ const EventsManagement = () => {
             <input
               {...register('title', { required: 'Event title is required' })}
               type="text"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.title ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter event title"
             />
             {errors.title && (
@@ -151,9 +150,8 @@ const EventsManagement = () => {
             <textarea
               {...register('description', { required: 'Description is required' })}
               rows={3}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.description ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Describe your event"
             ></textarea>
             {errors.description && (
@@ -166,9 +164,8 @@ const EventsManagement = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Club *</label>
               <select
                 {...register('clubId', { required: 'Please select a club' })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.clubId ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.clubId ? 'border-red-500' : 'border-gray-300'
+                  }`}
               >
                 <option value="">Select a club</option>
                 {managedClubs?.map(club => (
@@ -187,9 +184,8 @@ const EventsManagement = () => {
               <input
                 {...register('date', { required: 'Event date is required' })}
                 type="datetime-local"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.date ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.date ? 'border-red-500' : 'border-gray-300'
+                  }`}
               />
               {errors.date && (
                 <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
@@ -203,9 +199,8 @@ const EventsManagement = () => {
               <input
                 {...register('location', { required: 'Location is required' })}
                 type="text"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.location ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.location ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="Event location"
               />
               {errors.location && (
@@ -235,9 +230,8 @@ const EventsManagement = () => {
                   type="number"
                   min="0"
                   step="0.01"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                    errors.eventFee ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.eventFee ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder="0.00"
                 />
                 {errors.eventFee && (
@@ -256,9 +250,8 @@ const EventsManagement = () => {
               })}
               type="number"
               min="1"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.maxAttendees ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.maxAttendees ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Maximum number of attendees"
             />
             {errors.maxAttendees && (
@@ -270,7 +263,7 @@ const EventsManagement = () => {
             <button
               type="submit"
               disabled={createEventMutation.isPending}
-              className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
+              className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
             >
               {createEventMutation.isPending ? (
                 <>
@@ -342,9 +335,8 @@ const EventsManagement = () => {
             <input
               {...register('title', { required: 'Event title is required' })}
               type="text"
-              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.title ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter event title"
             />
             {errors.title && (
@@ -357,9 +349,8 @@ const EventsManagement = () => {
             <textarea
               {...register('description', { required: 'Description is required' })}
               rows={2}
-              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.description ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Describe your event"
             ></textarea>
             {errors.description && (
@@ -372,9 +363,8 @@ const EventsManagement = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Club *</label>
               <select
                 {...register('clubId', { required: 'Please select a club' })}
-                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.clubId ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.clubId ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 disabled // Club should not be changed after creation
               >
                 <option value="">Select a club</option>
@@ -394,9 +384,8 @@ const EventsManagement = () => {
               <input
                 {...register('date', { required: 'Event date is required' })}
                 type="datetime-local"
-                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.date ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.date ? 'border-red-500' : 'border-gray-300'
+                  }`}
               />
               {errors.date && (
                 <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
@@ -410,9 +399,8 @@ const EventsManagement = () => {
               <input
                 {...register('location', { required: 'Location is required' })}
                 type="text"
-                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                  errors.location ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.location ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="Event location"
               />
               {errors.location && (
@@ -442,9 +430,8 @@ const EventsManagement = () => {
                   type="number"
                   min="0"
                   step="0.01"
-                  className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                    errors.eventFee ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.eventFee ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder="0.00"
                 />
                 {errors.eventFee && (
@@ -463,9 +450,8 @@ const EventsManagement = () => {
               })}
               type="number"
               min="1"
-              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${
-                errors.maxAttendees ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.maxAttendees ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Maximum number of attendees"
             />
             {errors.maxAttendees && (
@@ -477,7 +463,7 @@ const EventsManagement = () => {
             <button
               type="submit"
               disabled={updateEventMutation.isPending}
-              className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
+              className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
             >
               {updateEventMutation.isPending ? (
                 <>
@@ -522,7 +508,7 @@ const EventsManagement = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Events Management</h1>
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center"
+            className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center"
           >
             <FaPlus className="mr-2" /> {showCreateForm ? 'Cancel' : 'Create Event'}
           </button>
@@ -607,7 +593,7 @@ const EventsManagement = () => {
             <p className="text-gray-500 mt-2">You haven't created any events yet</p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="mt-4 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
+              className="mt-4 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
             >
               Create Your First Event
             </button>

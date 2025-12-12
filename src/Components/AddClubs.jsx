@@ -19,7 +19,7 @@ const AddClubs = () => {
                 ...data,
                 email: user.email // Pass user's email as the manager email
             }, 'fake-token'); // Replace with actual token
-            
+
             toast.success('Club created successfully!');
             setTimeout(() => {
                 navigate('/'); // Redirect to home after successful creation
@@ -34,13 +34,13 @@ const AddClubs = () => {
 
     // Categories for clubs
     const categories = [
-        'Technology', 'Arts', 'Health & Fitness', 'Food & Drink', 
-        'Outdoors', 'Photography', 'Business', 'Music', 'Education', 
+        'Technology', 'Arts', 'Health & Fitness', 'Food & Drink',
+        'Outdoors', 'Photography', 'Business', 'Music', 'Education',
         'Sports', 'Gaming', 'Travel', 'Volunteering', 'Other'
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-10">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
@@ -62,9 +62,8 @@ const AddClubs = () => {
                                 id="clubName"
                                 type="text"
                                 {...register('clubName', { required: 'Club name is required' })}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${
-                                    errors.clubName ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${errors.clubName ? 'border-red-500' : 'border-gray-300'
+                                    }`}
                                 placeholder="Enter club name"
                             />
                             {errors.clubName && (
@@ -81,9 +80,8 @@ const AddClubs = () => {
                                 id="description"
                                 rows={4}
                                 {...register('description', { required: 'Description is required' })}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${
-                                    errors.description ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${errors.description ? 'border-red-500' : 'border-gray-300'
+                                    }`}
                                 placeholder="Describe your club"
                             ></textarea>
                             {errors.description && (
@@ -99,9 +97,8 @@ const AddClubs = () => {
                             <select
                                 id="category"
                                 {...register('category', { required: 'Category is required' })}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${
-                                    errors.category ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${errors.category ? 'border-red-500' : 'border-gray-300'
+                                    }`}
                             >
                                 <option value="">Select a category</option>
                                 {categories.map((category) => (
@@ -124,9 +121,8 @@ const AddClubs = () => {
                                 id="location"
                                 type="text"
                                 {...register('location', { required: 'Location is required' })}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${
-                                    errors.location ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${errors.location ? 'border-red-500' : 'border-gray-300'
+                                    }`}
                                 placeholder="City, Country"
                             />
                             {errors.location && (
@@ -158,13 +154,12 @@ const AddClubs = () => {
                                 type="number"
                                 min="0"
                                 step="0.01"
-                                {...register('membershipFee', { 
+                                {...register('membershipFee', {
                                     valueAsNumber: true,
                                     validate: value => value >= 0 || 'Fee cannot be negative'
                                 })}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${
-                                    errors.membershipFee ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] transition-all ${errors.membershipFee ? 'border-red-500' : 'border-gray-300'
+                                    }`}
                                 placeholder="0.00"
                             />
                             {errors.membershipFee && (
@@ -177,7 +172,7 @@ const AddClubs = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-3 px-6 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                                className="w-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white py-3 px-6 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                                 {loading ? (
                                     <div className="flex items-center">

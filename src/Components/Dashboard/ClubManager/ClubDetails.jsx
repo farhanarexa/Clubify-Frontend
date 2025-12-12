@@ -135,7 +135,7 @@ const ClubDetails = () => {
                         </div>
                         <button
                             onClick={() => setShowEditForm(!showEditForm)}
-                            className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center"
+                            className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center"
                         >
                             <FaEdit className="mr-2" /> {showEditForm ? 'Cancel' : 'Edit Club'}
                         </button>
@@ -231,7 +231,7 @@ const ClubDetails = () => {
                             <div className="flex gap-2">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
+                                    className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
                                 >
                                     Update Club
                                 </button>
@@ -260,11 +260,10 @@ const ClubDetails = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`py-4 px-1 flex items-center text-sm font-medium border-b-2 transition-colors ${
-                                        activeTab === tab.id
+                                    className={`py-4 px-1 flex items-center text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
                                             ? 'border-[#6A0DAD] text-[#6A0DAD]'
                                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    }`}
+                                        }`}
                                 >
                                     <span className="mr-2">{tab.icon}</span>
                                     {tab.label}
@@ -308,7 +307,7 @@ const ClubDetails = () => {
                                                 key={member._id}
                                                 className={`flex items-center p-4 ${index !== members.slice(0, 5).length - 1 ? 'border-b border-gray-200' : ''}`}
                                             >
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white font-bold mr-4">
+                                                <div className="w-10 h-10 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white font-bold mr-4">
                                                     {member.userEmail?.charAt(0).toUpperCase() || 'U'}
                                                 </div>
                                                 <div className="flex-1">
@@ -341,9 +340,8 @@ const ClubDetails = () => {
                                                         <h4 className="font-medium text-gray-800">{event.title}</h4>
                                                         <p className="text-sm text-gray-600">{new Date(event.eventDate).toLocaleString()}</p>
                                                     </div>
-                                                    <span className={`px-2 py-1 rounded-full text-xs ${
-                                                        event.isPaid ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                                                    }`}>
+                                                    <span className={`px-2 py-1 rounded-full text-xs ${event.isPaid ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                                                        }`}>
                                                         {event.isPaid ? `$${event.eventFee}` : 'Free'}
                                                     </span>
                                                 </div>
@@ -370,7 +368,7 @@ const ClubDetails = () => {
                                             key={member._id}
                                             className={`flex items-center p-4 ${index !== members.length - 1 ? 'border-b border-gray-200' : ''}`}
                                         >
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white font-bold mr-4">
+                                            <div className="w-10 h-10 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white font-bold mr-4">
                                                 {member.userEmail?.charAt(0).toUpperCase() || 'U'}
                                             </div>
                                             <div className="flex-1">
@@ -397,7 +395,7 @@ const ClubDetails = () => {
                                     <h3 className="text-xl font-semibold text-gray-800">Events ({events.length})</h3>
                                     <button
                                         onClick={() => navigate('/dashboard/manager/events')}
-                                        className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center"
+                                        className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center"
                                     >
                                         <FaPlus className="mr-2" /> Create Event
                                     </button>
@@ -457,9 +455,9 @@ const ClubDetails = () => {
                                                         <p className="font-medium text-gray-800">{payment.userEmail}</p>
                                                         <span className={`ml-4 px-2 py-1 rounded-full text-xs font-semibold
                                                             ${payment.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                              payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                              payment.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                              'bg-blue-100 text-blue-800'}`}>
+                                                                payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                                    payment.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                                        'bg-blue-100 text-blue-800'}`}>
                                                             {payment.status}
                                                         </span>
                                                     </div>

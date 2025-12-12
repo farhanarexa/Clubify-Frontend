@@ -74,7 +74,7 @@ const Home = () => {
   const { data: featuredClubs, isLoading, isError, error } = useQuery({
     queryKey: ['featuredClubs'],
     queryFn: fetchFeaturedClubs,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, 
   });
 
   // How it works steps
@@ -114,10 +114,10 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white">
+    <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white">
       {/* Hero Section */}
       <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] opacity-10"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] opacity-10"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center">
             <motion.div
@@ -127,7 +127,7 @@ const Home = () => {
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight mb-6">
-                Discover Your <span className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] bg-clip-text text-transparent">Perfect Community</span>
+                Discover Your <span className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] bg-clip-text text-transparent">Perfect Community</span>
               </h1>
               <p className="text-xl text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0">
                 Connect with people who share your interests, passions, and goals. Join clubs that matter to you and grow together.
@@ -136,7 +136,7 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+                  className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
                 >
                   Join a Club
                 </motion.button>
@@ -156,7 +156,7 @@ const Home = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <div className="relative">
-                <div className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-2xl p-1 shadow-2xl">
+                <div className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-2xl p-1 shadow-2xl">
                   <div className="bg-white rounded-xl p-6">
                     <div className="grid grid-cols-2 gap-4">
                       {mockClubs.slice(0, 4).map((club, index) => (
@@ -204,13 +204,13 @@ const Home = () => {
             {howItWorksSteps.map((step, index) => (
               <motion.div
                 key={index}
-                className="bg-gradient-to-b from-white to-gray-50 rounded-2xl p-6 text-center shadow-lg border border-gray-100"
+                className="bg-linear-to-b from-white to-gray-50 rounded-2xl p-6 text-center shadow-lg border border-gray-100"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <div className="w-16 h-16 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                <div className="w-16 h-16 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center mx-auto mb-4 text-white">
                   {step.icon}
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{step.title}</h3>
@@ -285,7 +285,7 @@ const Home = () => {
                         <FaUsers className="mr-2" />
                         <span>{club.members.toLocaleString()} members</span>
                       </div>
-                      <button className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                      <button className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
                         Join
                       </button>
                     </div>
@@ -317,14 +317,14 @@ const Home = () => {
             {popularCategories.map((category, index) => (
               <motion.div
                 key={index}
-                className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-gray-100"
+                className="bg-linear-to-br from-white to-gray-50 rounded-2xl p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-gray-100"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                <div className="w-12 h-12 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-full flex items-center justify-center mx-auto mb-4 text-white">
                   <FaHeart />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-1">{category.name}</h3>
@@ -336,7 +336,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2]">
+      <section className="mx-50 rounded-4xl py-20 bg-linear-to-r from-[#A45CFF] to-[#7ED8FF]">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -352,14 +352,14 @@ const Home = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white text-[#6A0DAD] px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-gray-100 transition-all"
+                className="bg-white text-[#A45CFF] px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-gray-100 transition-all"
               >
                 Find Clubs
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-[#6A0DAD] transition-all"
+                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-[#A45CFF] transition-all"
               >
                 Create Club
               </motion.button>

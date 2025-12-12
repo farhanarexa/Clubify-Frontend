@@ -49,8 +49,8 @@ const MemberMyClubs = () => {
                         <p className="text-gray-600 mb-2 line-clamp-2">{membership.description}</p>
                         <div className="flex justify-between items-center mt-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                                ${membership.status === 'active' ? 'bg-green-100 text-green-800' : 
-                                  'bg-yellow-100 text-yellow-800'}`}>
+                                ${membership.status === 'active' ? 'bg-green-100 text-green-800' :
+                                    'bg-yellow-100 text-yellow-800'}`}>
                                 {membership.status}
                             </span>
                             <div className="text-sm text-gray-600">
@@ -63,7 +63,7 @@ const MemberMyClubs = () => {
                                 <span className="font-medium">{new Date(membership.joinedAt).toLocaleDateString()}</span>
                             </div>
                         </div>
-                        <button className="w-full mt-4 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                        <button className="w-full mt-4 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
                             View Details
                         </button>
                     </div>
@@ -73,9 +73,9 @@ const MemberMyClubs = () => {
             {memberships.length === 0 && (
                 <div className="text-center py-8">
                     <p className="text-gray-500">You haven't joined any clubs yet</p>
-                    <a 
-                        href="/availableclubs" 
-                        className="mt-4 inline-block bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                    <a
+                        href="/availableclubs"
+                        className="mt-4 inline-block bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
                     >
                         Browse Clubs
                     </a>

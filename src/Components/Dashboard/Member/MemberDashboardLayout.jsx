@@ -5,7 +5,7 @@ const DashboardLayout = () => {
     return (
         <div className="flex h-screen bg-gray-50">
             {/* Sidebar */}
-            <div className="hidden lg:block w-64 bg-gradient-to-b from-[#6A0DAD] to-[#9F62F2] text-white p-4">
+            <div className="hidden lg:block w-64 bg-linear-to-b from-[#6A0DAD] to-[#9F62F2] text-white p-4">
                 <div className="mb-8">
                     <h1 className="text-xl font-bold">Clubify Dashboard</h1>
                 </div>
@@ -56,7 +56,7 @@ const DashboardLayout = () => {
                         <h2 className="text-lg font-semibold text-gray-800">Member Dashboard</h2>
 
                         <div className="flex items-center space-x-4">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
                                 U
                             </div>
                         </div>

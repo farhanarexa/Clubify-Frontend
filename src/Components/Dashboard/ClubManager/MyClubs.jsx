@@ -144,7 +144,7 @@ const MyClubs = () => {
                             setEditingClub(null);
                             setShowForm(!showForm);
                         }}
-                        className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                        className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
                     >
                         {showForm ? 'Cancel' : '+ Add New Club'}
                     </button>
@@ -242,7 +242,7 @@ const MyClubs = () => {
                         <div className="flex gap-2">
                             <button
                                 type="submit"
-                                className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
+                                className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
                             >
                                 {editingClub ? 'Update Club' : 'Create Club'}
                             </button>
@@ -267,8 +267,8 @@ const MyClubs = () => {
                         <div className="flex justify-between items-center mt-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold
                                 ${club.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                  club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'}`}>
+                                    club.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                        'bg-red-100 text-red-800'}`}>
                                 {club.status}
                             </span>
                             <div className="text-sm text-gray-600">
@@ -284,7 +284,7 @@ const MyClubs = () => {
                         <div className="flex gap-2 mt-4">
                             <button
                                 onClick={() => handleEditClub(club)}
-                                className="flex-1 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                                className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
                             >
                                 Edit
                             </button>
@@ -304,7 +304,7 @@ const MyClubs = () => {
                     <p className="text-gray-500">You don't manage any clubs yet</p>
                     <button
                         onClick={() => setShowForm(true)}
-                        className="mt-4 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                        className="mt-4 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
                     >
                         Create Your First Club
                     </button>

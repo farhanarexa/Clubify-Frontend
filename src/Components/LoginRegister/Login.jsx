@@ -104,11 +104,10 @@ const Login = () => {
                 <div className="relative flex bg-white/20 backdrop-blur-md rounded-full p-1 border border-white/30 shadow-lg">
                     <button
                         onClick={() => setIsLogin(true)}
-                        className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${
-                            isLogin
+                        className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${isLogin
                                 ? 'text-white bg-linear-to-r from-[#A45CFF] to-[#7ED8FF]'
                                 : 'text-gray-700 hover:text-gray-900'
-                        }`}
+                            }`}
                     >
                         <div className="flex items-center justify-center gap-2">
                             <FaSignInAlt /> Login
@@ -116,11 +115,10 @@ const Login = () => {
                     </button>
                     <button
                         onClick={() => setIsLogin(false)}
-                        className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${
-                            !isLogin
+                        className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${!isLogin
                                 ? 'text-white bg-linear-to-r from-[#A45CFF] to-[#7ED8FF]'
                                 : 'text-gray-700 hover:text-gray-900'
-                        }`}
+                            }`}
                     >
                         <div className="flex items-center justify-center gap-2">
                             <FaUserPlus /> Register
@@ -128,9 +126,8 @@ const Login = () => {
                     </button>
                     {/* Animated Indicator */}
                     <div
-                        className={`absolute top-1 h-[calc(100%-0.5rem)] w-1/2 bg-white/30 backdrop-blur-sm rounded-full transition-transform duration-500 ease-in-out ${
-                            isLogin ? 'translate-x-0' : 'translate-x-full'
-                        }`}
+                        className={`absolute top-1 h-[calc(100%-0.5rem)] w-1/2 bg-white/30 backdrop-blur-sm rounded-full transition-transform duration-500 ease-in-out ${isLogin ? 'translate-x-0' : 'translate-x-full'
+                            }`}
                         style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
                     ></div>
                 </div>
@@ -139,9 +136,8 @@ const Login = () => {
             <div className="relative w-full max-w-md z-10 mt-16">
                 {/* Login Form */}
                 <div
-                    className={`transition-all duration-700 ease-in-out transform ${
-                        isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
-                    } ${isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
+                    className={`transition-all duration-700 ease-in-out transform ${isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
+                        } ${isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
                     style={{ transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)', marginTop: '-100px' }}
                 >
                     <div className="space-y-6">
@@ -171,9 +167,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="email"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                loginErrors.email ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${loginErrors.email ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Enter your email"
                                         />
                                         {loginErrors.email && (
@@ -198,9 +193,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="password"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                loginErrors.password ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${loginErrors.password ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Enter your password"
                                         />
                                         {loginErrors.password && (
@@ -259,9 +253,8 @@ const Login = () => {
 
                 {/* Register Form */}
                 <div
-                    className={`transition-all duration-700 ease-in-out transform ${
-                        !isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
-                    } ${!isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
+                    className={`transition-all duration-700 ease-in-out transform ${!isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
+                        } ${!isLogin ? '' : 'h-0 overflow-hidden w-full'}`}
                     style={{ transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
                 >
                     <div className="space-y-3">
@@ -290,9 +283,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="text"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                registerErrors.name ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${registerErrors.name ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Enter your name"
                                         />
                                         {registerErrors.name && (
@@ -317,9 +309,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="email"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                registerErrors.email ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${registerErrors.email ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Enter your email"
                                         />
                                         {registerErrors.email && (
@@ -346,9 +337,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="password"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                registerErrors.password ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${registerErrors.password ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Create a password"
                                         />
                                         {registerErrors.password && (
@@ -373,9 +363,8 @@ const Login = () => {
                                                 }
                                             })}
                                             type="text"
-                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${
-                                                registerErrors.photoURL ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#A45CFF] focus:border-[#A45CFF] transition-all duration-300 bg-white/50 backdrop-blur-sm ${registerErrors.photoURL ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder="Enter photo URL (optional)"
                                         />
                                         {registerErrors.photoURL && (
@@ -388,7 +377,7 @@ const Login = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                                    className="w-full bg-linear-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
                                 >
                                     {loading ? (
                                         <div className="flex items-center">

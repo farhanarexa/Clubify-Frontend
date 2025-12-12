@@ -110,7 +110,7 @@ const Events = () => {
 
   if (eventsLoading || clubsLoading || registrationsLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+      <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6A0DAD]"></div>
       </div>
     );
@@ -119,7 +119,7 @@ const Events = () => {
   console.log("Final upcoming events to display:", upcomingEvents); // Debug log
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
@@ -195,7 +195,7 @@ const Events = () => {
 
               return (
                 <div key={event._id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className="h-48 bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] relative">
+                  <div className="h-48 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] relative">
                     <div className="absolute inset-0 bg-black bg-opacity-10"></div>
                     <div className="absolute bottom-4 left-4 text-white">
                       <h3 className="text-xl font-bold">{event.title}</h3>
@@ -229,9 +229,8 @@ const Events = () => {
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        associatedClub?.category ? 'bg-[#6A0DAD]/10 text-[#6A0DAD]' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${associatedClub?.category ? 'bg-[#6A0DAD]/10 text-[#6A0DAD]' : 'bg-gray-100 text-gray-800'
+                        }`}>
                         {associatedClub?.category || 'Uncategorized'}
                       </span>
 
@@ -249,11 +248,10 @@ const Events = () => {
                             userEmail: user?.email
                           })}
                           disabled={registerForEventMutation.isPending || !user}
-                          className={`${
-                            user
-                              ? 'bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] hover:opacity-90'
+                          className={`${user
+                              ? 'bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] hover:opacity-90'
                               : 'bg-gray-400 cursor-not-allowed'
-                          } text-white px-4 py-2 rounded-lg transition-opacity text-sm flex items-center`}
+                            } text-white px-4 py-2 rounded-lg transition-opacity text-sm flex items-center`}
                         >
                           {registerForEventMutation.isPending ? (
                             <span>Registering...</span>

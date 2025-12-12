@@ -5,38 +5,38 @@ const DashboardLayout = () => {
     return (
         <div className="flex h-screen bg-gray-50">
             {/* Sidebar */}
-            <div className="hidden lg:block w-64 bg-gradient-to-b from-[#6A0DAD] to-[#9F62F2] text-white p-4">
+            <div className="hidden lg:block w-64 bg-linear-to-b from-[#6A0DAD] to-[#9F62F2] text-white p-4">
                 <div className="mb-8">
                     <h1 className="text-xl font-bold">Clubify Dashboard</h1>
                 </div>
 
                 <nav className="space-y-2">
-                    <Link 
-                        to="/dashboard/manager" 
+                    <Link
+                        to="/dashboard/manager"
                         className="block px-4 py-2 rounded-lg bg-white/10"
                     >
                         Dashboard
                     </Link>
-                    <Link 
-                        to="/dashboard/manager/clubs" 
+                    <Link
+                        to="/dashboard/manager/clubs"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         My Clubs
                     </Link>
-                    <Link 
-                        to="/dashboard/manager/members" 
+                    <Link
+                        to="/dashboard/manager/members"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         Club Members
                     </Link>
-                    <Link 
-                        to="/dashboard/manager/events" 
+                    <Link
+                        to="/dashboard/manager/events"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         Events
                     </Link>
-                    <Link 
-                        to="/dashboard/manager/registrations" 
+                    <Link
+                        to="/dashboard/manager/registrations"
                         className="block px-4 py-2 rounded-lg hover:bg-white/10"
                     >
                         Registrations
@@ -46,7 +46,7 @@ const DashboardLayout = () => {
 
             {/* Mobile sidebar */}
             <div className="lg:hidden fixed inset-0 z-50 bg-black/50"></div>
-            
+
             {/* Main content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top bar */}
@@ -60,9 +60,9 @@ const DashboardLayout = () => {
                             </button>
                         </div>
                         <h2 className="text-lg font-semibold text-gray-800">Manager Dashboard</h2>
-                        
+
                         <div className="flex items-center space-x-4">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">
                                 M
                             </div>
                         </div>

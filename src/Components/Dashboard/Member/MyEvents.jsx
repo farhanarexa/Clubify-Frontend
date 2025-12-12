@@ -55,8 +55,8 @@ const MyEvents = () => {
                             </div>
                             <div className="text-right">
                                 <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                                    ${registration.status === 'registered' ? 'bg-green-100 text-green-800' : 
-                                      'bg-red-100 text-red-800'}`}>
+                                    ${registration.status === 'registered' ? 'bg-green-100 text-green-800' :
+                                        'bg-red-100 text-red-800'}`}>
                                     {registration.status}
                                 </span>
                             </div>
@@ -65,7 +65,7 @@ const MyEvents = () => {
                             <div className="text-sm text-gray-600">
                                 Registered: {new Date(registration.registeredAt).toLocaleDateString()}
                             </div>
-                            <button className="bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                            <button className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
                                 View Details
                             </button>
                         </div>
@@ -76,9 +76,9 @@ const MyEvents = () => {
             {registrations.length === 0 && (
                 <div className="text-center py-8">
                     <p className="text-gray-500">You haven't registered for any events yet</p>
-                    <a 
-                        href="/availableclubs" 
-                        className="mt-4 inline-block bg-gradient-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                    <a
+                        href="/availableclubs"
+                        className="mt-4 inline-block bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
                     >
                         Browse Events
                     </a>
