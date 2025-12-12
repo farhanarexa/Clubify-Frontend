@@ -133,12 +133,7 @@ const Navbar = () => {
                             >
                                 Login
                             </Link>
-                            <Link
-                                to="/login?mode=register"
-                                className="btn bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white px-6 transition-all font-medium"
-                            >
-                                Register
-                            </Link>
+                            
                         </>
                     )}
                 </div>
