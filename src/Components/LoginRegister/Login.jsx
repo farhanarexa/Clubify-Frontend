@@ -92,7 +92,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
             <div className="absolute inset-0 overflow-hidden z-0">
                 <div className="absolute -top-40 -left-40 w-80 h-80 bg-[#A45CFF] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
                 <div className="absolute top-20 -right-20 w-80 h-80 bg-[#7ED8FF] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -106,7 +106,7 @@ const Login = () => {
                         onClick={() => setIsLogin(true)}
                         className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${
                             isLogin
-                                ? 'text-white bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF]'
+                                ? 'text-white bg-linear-to-r from-[#A45CFF] to-[#7ED8FF]'
                                 : 'text-gray-700 hover:text-gray-900'
                         }`}
                     >
@@ -118,7 +118,7 @@ const Login = () => {
                         onClick={() => setIsLogin(false)}
                         className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 relative z-10 ${
                             !isLogin
-                                ? 'text-white bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF]'
+                                ? 'text-white bg-linear-to-r from-[#A45CFF] to-[#7ED8FF]'
                                 : 'text-gray-700 hover:text-gray-900'
                         }`}
                     >
@@ -147,7 +147,7 @@ const Login = () => {
                     <div className="space-y-6">
                         <div className="text-center">
 
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
+                            <h1 className="text-3xl font-bold bg-linear-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
                                 Welcome Back
                             </h1>
                             <p className="text-gray-600 mt-2">Sign in to your Clubify account</p>
@@ -220,7 +220,7 @@ const Login = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-gradient-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                                    className="w-full bg-linear-to-r from-[#A45CFF] to-[#7ED8FF] text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
                                 >
                                     {loading ? (
                                         <div className="flex items-center">
@@ -228,18 +228,18 @@ const Login = () => {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Signing in...
+                                            Logging in...
                                         </div>
                                     ) : (
-                                        'Sign In to Clubify'
+                                        'Login to Clubify'
                                     )}
                                 </button>
 
                                 {/* Divider */}
                                 <div className="flex items-center my-6">
-                                    <div className="flex-grow border-t border-gray-300"></div>
+                                    <div className="grow border-t border-gray-300"></div>
                                     <span className="mx-4 text-gray-500 text-sm">or continue with</span>
-                                    <div className="flex-grow border-t border-gray-300"></div>
+                                    <div className="grow border-t border-gray-300"></div>
                                 </div>
 
                                 {/* Google Sign In */}
@@ -266,7 +266,7 @@ const Login = () => {
                 >
                     <div className="space-y-3">
                         <div className="text-center">
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
+                            <h1 className="text-3xl font-bold bg-linear-to-r from-[#A45CFF] to-[#FF8FA0] bg-clip-text text-transparent">
                                 Join Clubify
                             </h1>
                             <p className="text-gray-600 mt-2">Create your account to get started</p>
