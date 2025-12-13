@@ -8,10 +8,10 @@ const ManageClubs = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const queryClient = useQueryClient();
 
-  // Fetch all clubs
+  // Fetch all clubs (admin view)
   const { data: clubs, isLoading, error } = useQuery({
     queryKey: ['allClubs'],
-    queryFn: () => clubApi.getClubsByStatus('all'),
+    queryFn: () => clubApi.getAllClubs({ isAdmin: true }),
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 

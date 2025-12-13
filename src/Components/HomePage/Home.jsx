@@ -114,7 +114,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#FAF8F0] to-white">
+    <div className="min-h-screen ">
       {/* Hero Section */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] opacity-10"></div>
@@ -185,7 +185,7 @@ const Home = () => {
       </section>
 
       {/* How ClubSphere Works Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 ">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-16"
@@ -222,7 +222,7 @@ const Home = () => {
       </section>
 
       {/* Featured Clubs Section */}
-      <section className="py-20 bg-linear-to-b from-white to-gray-50">
+      <section className="py-20 ">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-16"
@@ -298,7 +298,7 @@ const Home = () => {
       </section>
 
       {/* Popular Categories Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 ">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-16"
@@ -317,7 +317,7 @@ const Home = () => {
             {popularCategories.map((category, index) => (
               <motion.div
                 key={index}
-                className="bg-linear-to-br from-white to-gray-50 rounded-2xl p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-gray-100"
+                className="bg-white rounded-2xl p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-gray-100"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
