@@ -66,7 +66,7 @@ const Events = () => {
 
     upcomingEvents = allEvents.filter(event => {
       if (!event.date) return false;
-      const eventDate = new Date(event.date);
+      const eventDate = new Date(event.eventDate);
       console.log("Event date:", eventDate, "Event:", event.title, "Is future?", eventDate > now); // Debug log
       return eventDate > now;
     });
