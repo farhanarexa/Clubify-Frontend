@@ -491,4 +491,37 @@ export const paymentApi = {
   }
 };
 
+// Stripe-related API calls
+export const stripeApi = {
+  // Create event payment intent
+  createEventPaymentIntent: async (eventId, userEmail, amount) => {
+    try {
+      const response = await api.post('/stripe/create-event-payment-intent', {
+        eventId,
+        userEmail,
+        amount
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating event payment intent:', error);
+      throw error;
+    }
+  },
+
+  // Create membership payment intent
+  createMembershipPaymentIntent: async (clubId, userEmail, amount) => {
+    try {
+      const response = await api.post('/stripe/create-membership-payment-intent', {
+        clubId,
+        userEmail,
+        amount
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating membership payment intent:', error);
+      throw error;
+    }
+  }
+};
+
 export default api;

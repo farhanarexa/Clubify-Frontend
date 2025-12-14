@@ -5,6 +5,7 @@ import { clubApi } from '../api/clubifyApi';
 import { AuthContext } from '../Contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { FaCalendarAlt, FaMapMarkerAlt, FaDollarSign, FaUsers, FaFilter, FaCheck, FaUserCheck } from 'react-icons/fa';
+import PaymentComponent from './PaymentComponent';
 
 const Events = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -240,6 +241,31 @@ const Events = () => {
                           disabled
                         >
                           <FaCheck className="mr-1" /> Registered
+                        </button>
+                      ) : event.isPaid ? (
+                        <button
+                          onClick={() => {
+                            // For paid events, we need to show payment component
+                            // This is a simplified payment flow - in a complete implementation,
+                            // you might want to show a modal with the PaymentComponent
+                            if (!user) {
+                              toast.error('Please log in to register for events');
+                              return;
+                            }
+
+                            // In a real app, we'd show a modal with the payment component
+                            // For now, we'll just show a toast with the payment info
+                            toast.info(`This is a paid event. Fee: $${event.eventFee || 0}`);
+                          }}
+                          disabled={!user}
+                          className={`${user
+                              ? 'bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] hover:opacity-90'
+                              : 'bg-gray-400 cursor-not-allowed'
+                            } text-white px-4 py-2 rounded-lg transition-opacity text-sm flex items-center`}
+                        >
+                          <>
+                            <FaDollarSign className="mr-1" /> Pay & Register
+                          </>
                         </button>
                       ) : (
                         <button

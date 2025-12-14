@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../Contexts/AuthContext';
 import { Link } from 'react-router';
 import axios from 'axios';
-
+import PaymentComponent from './PaymentComponent';
 
 const AvailableClubs = () => {
     const { user } = useContext(AuthContext);
@@ -17,6 +17,7 @@ const AvailableClubs = () => {
     const [sortOrder, setSortOrder] = useState('desc');
     const [userMemberships, setUserMemberships] = useState([]);
     const [joiningClubs, setJoiningClubs] = useState(new Set());
+    const [showPaymentModal, setShowPaymentModal] = useState(null); // { clubId, clubName, membershipFee }
 
     // Categories for filtering
     const categories = [
@@ -62,29 +63,33 @@ const AvailableClubs = () => {
             return;
         }
 
-        // Prevent double-clicks
+        // If it's a paid club, show the payment modal
+        if (membershipFee > 0) {
+            const club = clubs.find(c => c._id === clubId);
+            setShowPaymentModal({
+                clubId,
+                clubName: club?.clubName || 'Club',
+                membershipFee
+            });
+            return;
+        }
+
+        // For free clubs, proceed directly
         if (joiningClubs.has(clubId)) return;
 
         // Add to joining state (show loading)
         setJoiningClubs(prev => new Set(prev).add(clubId));
 
         try {
-            let paymentId = null;
-
-            // If paid club, simulate payment (or integrate real payment gateway later)
-            if (membershipFee > 0) {
-                // For now, just mock a paymentId (in real app, get this from payment gateway)
-                paymentId = `pay_${Date.now()}_${clubId}`;
-                toast.info(`Processing payment of $${membershipFee}...`);
-            }
-
             // Send membership request
             await axios.post('http://localhost:3000/memberships', {
                 userEmail: user.email,
                 clubId: clubId,
-                paymentId: paymentId || null,
             }, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${await window.firebaseUserToken || 'fake-token'}` // In a real app, get actual token
+                },
             });
 
             // Success: Show toast
@@ -112,6 +117,16 @@ const AvailableClubs = () => {
                 return newSet;
             });
         }
+    };
+
+    const handlePaymentSuccess = () => {
+        setShowPaymentModal(null);
+        toast.success('Successfully joined the club!');
+        fetchUserMemberships();
+    };
+
+    const handlePaymentCancel = () => {
+        setShowPaymentModal(null);
     };
 
 
@@ -333,6 +348,38 @@ const AvailableClubs = () => {
                     <div className="text-center py-12">
                         <h3 className="text-xl font-semibold text-gray-700">No clubs available yet</h3>
                         <p className="text-gray-500 mt-2">Check back later for new clubs</p>
+                    </div>
+                )}
+
+                {/* Payment Modal for Paid Clubs */}
+                {showPaymentModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-lg shadow-xl max-w-md w-full relative">
+                            <div className="p-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-bold text-gray-800">
+                                        Join {showPaymentModal.clubName}
+                                    </h3>
+                                    <button
+                                        onClick={handlePaymentCancel}
+                                        className="text-gray-500 hover:text-gray-700"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                <p className="text-gray-600 mb-4">
+                                    Membership Fee: ${showPaymentModal.membershipFee}
+                                </p>
+                                <PaymentComponent
+                                    amount={showPaymentModal.membershipFee}
+                                    type="membership"
+                                    itemId={showPaymentModal.clubId}
+                                    userEmail={user?.email}
+                                    onSuccess={handlePaymentSuccess}
+                                    onCancel={handlePaymentCancel}
+                                />
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
