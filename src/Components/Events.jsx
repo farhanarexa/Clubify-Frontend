@@ -14,6 +14,9 @@ const Events = () => {
   const { user } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
+  // State for payment modal
+  const [showPaymentModal, setShowPaymentModal] = useState(null); // { eventId, eventName, eventFee }
+
   // Fetch all clubs for filtering
   const { data: allClubs, isLoading: clubsLoading } = useQuery({
     queryKey: ['allClubs'],
@@ -55,6 +58,32 @@ const Events = () => {
   const isUserRegistered = (eventId) => {
     if (!userRegistrations || !Array.isArray(userRegistrations)) return false;
     return userRegistrations.some(reg => reg.eventId === eventId);
+  };
+
+  // Handle event registration for paid events
+  const handlePaidEventRegistration = (eventId, eventName, eventFee) => {
+    if (!user) {
+      toast.error('Please log in to register for events');
+      return;
+    }
+
+    // Show payment modal for paid events
+    setShowPaymentModal({
+      eventId,
+      eventName,
+      eventFee
+    });
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(null);
+    toast.success('Successfully registered for the event!');
+    queryClient.invalidateQueries({ queryKey: ['userRegistrations', user?.email] });
+    queryClient.invalidateQueries({ queryKey: ['allEvents'] });
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentModal(null);
   };
 
   // Filter and sort upcoming events
@@ -244,19 +273,7 @@ const Events = () => {
                         </button>
                       ) : event.isPaid ? (
                         <button
-                          onClick={() => {
-                            // For paid events, we need to show payment component
-                            // This is a simplified payment flow - in a complete implementation,
-                            // you might want to show a modal with the PaymentComponent
-                            if (!user) {
-                              toast.error('Please log in to register for events');
-                              return;
-                            }
-
-                            // In a real app, we'd show a modal with the payment component
-                            // For now, we'll just show a toast with the payment info
-                            toast.info(`This is a paid event. Fee: $${event.eventFee || 0}`);
-                          }}
+                          onClick={() => handlePaidEventRegistration(event._id, event.title, event.eventFee)}
                           disabled={!user}
                           className={`${user
                               ? 'bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] hover:opacity-90'
@@ -314,6 +331,38 @@ const Events = () => {
                 Clear all filters
               </button>
             )}
+          </div>
+        )}
+
+        {/* Payment Modal for Paid Events */}
+        {showPaymentModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full relative">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-bold text-gray-800">
+                    Register for {showPaymentModal.eventName}
+                  </h3>
+                  <button
+                    onClick={handlePaymentCancel}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  Registration Fee: ${showPaymentModal.eventFee}
+                </p>
+                <PaymentComponent
+                  amount={showPaymentModal.eventFee}
+                  type="event"
+                  itemId={showPaymentModal.eventId}
+                  userEmail={user?.email}
+                  onSuccess={handlePaymentSuccess}
+                  onCancel={handlePaymentCancel}
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

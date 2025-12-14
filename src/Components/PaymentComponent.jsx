@@ -51,13 +51,7 @@ const PaymentForm = ({ amount, type, itemId, userEmail, onSuccess, onCancel }) =
           // Payment successful, complete the registration
           if (type === 'event') {
             try {
-              // Register user for the event using our API service
-              await eventRegistrationApi.registerForEvent({
-                eventId: itemId,
-                userEmail: userEmail
-              });
-
-              // Create payment record
+              // Create payment record first
               await paymentApi.createPayment({
                 userEmail: userEmail,
                 amount: parseFloat(amount),
@@ -65,6 +59,13 @@ const PaymentForm = ({ amount, type, itemId, userEmail, onSuccess, onCancel }) =
                 eventId: itemId,
                 stripePaymentIntentId: result.paymentIntent.id,
                 status: 'completed'
+              });
+
+              // Register user for the event using our API service, including the payment ID
+              await eventRegistrationApi.registerForEvent({
+                eventId: itemId,
+                userEmail: userEmail,
+                paymentId: result.paymentIntent.id // Include the payment ID
               });
 
               toast.success('Successfully registered and paid for event!');
