@@ -75,15 +75,7 @@ const PaymentForm = ({ amount, type, itemId, userEmail, onSuccess, onCancel }) =
             }
           } else if (type === 'membership') {
             try {
-              // Create membership record using our API service
-              await membershipApi.createMembership({
-                userEmail: userEmail,
-                clubId: itemId,
-                status: 'active',
-                joinedDate: new Date().toISOString()
-              });
-
-              // Create payment record
+              // Create payment record first
               await paymentApi.createPayment({
                 userEmail: userEmail,
                 amount: parseFloat(amount),
@@ -91,6 +83,15 @@ const PaymentForm = ({ amount, type, itemId, userEmail, onSuccess, onCancel }) =
                 clubId: itemId,
                 stripePaymentIntentId: result.paymentIntent.id,
                 status: 'completed'
+              });
+
+              // Create membership record using our API service, including the payment ID
+              await membershipApi.createMembership({
+                userEmail: userEmail,
+                clubId: itemId,
+                paymentId: result.paymentIntent.id, // Include the payment ID
+                status: 'active',
+                joinedDate: new Date().toISOString()
               });
 
               toast.success('Successfully joined club with payment!');

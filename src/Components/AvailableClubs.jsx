@@ -82,14 +82,10 @@ const AvailableClubs = () => {
 
         try {
             // Send membership request
-            await axios.post('http://localhost:3000/memberships', {
+            await membershipApi.createMembership({
                 userEmail: user.email,
                 clubId: clubId,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${await window.firebaseUserToken || 'fake-token'}` // In a real app, get actual token
-                },
+                status: 'active'
             });
 
             // Success: Show toast
@@ -107,7 +103,7 @@ const AvailableClubs = () => {
 
         } catch (error) {
             console.error('Error joining club:', error);
-            const message = error.response?.data?.message || 'Failed to join the club';
+            const message = error.response?.data?.error || 'Failed to join the club';
             toast.error(message);
 
             // Always remove from joining state on error too
