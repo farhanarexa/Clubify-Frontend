@@ -132,6 +132,17 @@ export const userApi = {
       console.error('Error getting users by role:', error);
       throw error;
     }
+  },
+
+  // Update user profile (name and photoURL only)
+  updateUserProfile: async (email, profileData) => {
+    try {
+      const response = await api.patch(`/users/profile/${email}`, profileData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
   }
 };
 

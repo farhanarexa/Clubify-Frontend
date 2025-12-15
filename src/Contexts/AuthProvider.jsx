@@ -76,6 +76,32 @@ const AuthProvider = ({ children }) => {
         return signOut(auth).finally(() => setLoading(false));
     };
 
+    // Function to refresh user data from MongoDB
+    const refreshUserData = async () => {
+        try {
+            const authUser = auth.currentUser; // Get current Firebase user
+            if (authUser) {
+                setError(null);
+                // Fetch user data from MongoDB to get the role
+                const userData = await userApi.getUserByEmail(authUser.email);
+
+                // Update the user object with role information from MongoDB
+                const userWithRole = {
+                    ...authUser,
+                    role: userData.role,
+                    name: userData.name,
+                    photoURL: userData.photoURL,
+                    createdAt: userData.createdAt
+                };
+
+                setUser(userWithRole);
+            }
+        } catch (error) {
+            console.error('Error refreshing user data:', error);
+            setError(error.message || 'Failed to refresh user data');
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
             if (authUser) {
@@ -144,6 +170,7 @@ const AuthProvider = ({ children }) => {
         signInUser,
         signInWithGoogle,
         signOutUser,
+        refreshUserData, // Add the function to refresh user data
     };
 
     return (
