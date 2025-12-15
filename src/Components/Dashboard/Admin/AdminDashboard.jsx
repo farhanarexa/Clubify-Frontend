@@ -14,7 +14,7 @@ const AdminDashboard = () => {
 
   const { data: clubsSummary, isLoading: loadingClubs } = useQuery({
     queryKey: ['allClubs'],
-    queryFn: () => clubApi.getClubsByStatus('all'),
+    queryFn: () => clubApi.getAllClubs({ isAdmin: true }),
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       try {
         // Since there's no direct API to get all memberships, let's fetch them by iterating clubs
-        const clubs = await clubApi.getClubsByStatus('all');
+        const clubs = await clubApi.getAllClubs({ isAdmin: true });
         const allMemberships = [];
         for (const club of clubs) {
           try {
