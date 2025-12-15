@@ -35,6 +35,10 @@ import MemberMyClubs from './Components/Dashboard/Member/MyClubs.jsx';
 import MyEvents from './Components/Dashboard/Member/MyEvents.jsx';
 import PaymentHistory from './Components/Dashboard/Member/PaymentHistory.jsx';
 
+// Import ToastContainer
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Create a client
 const queryClient = new QueryClient();
 
@@ -149,6 +153,18 @@ createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <RouterProvider router={router} />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>

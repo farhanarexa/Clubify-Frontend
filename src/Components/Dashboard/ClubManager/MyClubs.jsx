@@ -4,6 +4,7 @@ import { membershipApi } from '../../../api/clubifyApi';
 import { toast } from 'react-toastify';
 import { useContext } from 'react';
 import { AuthContext } from '../../../Contexts/AuthContext';
+import { FaTrash, FaEdit, FaUsers } from 'react-icons/fa';
 
 const MyClubs = () => {
     const { user } = useContext(AuthContext);
@@ -87,6 +88,19 @@ const MyClubs = () => {
         } catch (error) {
             console.error('Error submitting club:', error);
             toast.error(error.response?.data?.error || 'Failed to submit club');
+        }
+    };
+
+    const handleDeleteClub = async (clubId, clubName) => {
+        if (window.confirm(`Are you sure you want to delete the club "${clubName}"? This action cannot be undone and will remove all associated data.`)) {
+            try {
+                await clubApi.deleteClub(clubId);
+                toast.success('Club deleted successfully!');
+                fetchClubs(); // Refresh the list after deletion
+            } catch (error) {
+                console.error('Error deleting club:', error);
+                toast.error(error.response?.data?.error || 'Failed to delete club');
+            }
         }
     };
 
@@ -277,16 +291,22 @@ const MyClubs = () => {
                         </div>
                         <div className="mt-4 pt-4 border-t border-gray-200">
                             <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Members:</span>
+                                <span className="text-gray-600 flex items-center"><FaUsers className="mr-1" /> Members:</span>
                                 <span className="font-medium">{club.memberCount}</span>
                             </div>
                         </div>
                         <div className="flex gap-2 mt-4">
                             <button
                                 onClick={() => handleEditClub(club)}
-                                className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                                className="flex-1 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center"
                             >
-                                Edit
+                                <FaEdit className="mr-2" /> Edit
+                            </button>
+                            <button
+                                onClick={() => handleDeleteClub(club._id, club.clubName)}
+                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
+                            >
+                                <FaTrash className="mr-2" /> Delete
                             </button>
                             <a
                                 href={`/dashboard/manager/clubs/${club._id}`}
