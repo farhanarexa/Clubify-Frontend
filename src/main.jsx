@@ -16,6 +16,8 @@ import Profile from './Components/Profile.jsx';
 import NotFound from './Components/Common/NotFound.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ClubDetailsPublic from './Components/ClubDetails/ClubDetails.jsx';
+import Contact from './Components/Contact.jsx';
+import About from './Components/About.jsx';
 
 // Dashboard components
 import DashboardLayout from './Components/Dashboard/DashboardLayout.jsx';
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "about",
+        Component: About
+      },
+      {
+        path: "contact",
+        Component: Contact
       },
       {
         path: "availableclubs",

@@ -29,6 +29,30 @@ const Navbar = () => {
                 Home
             </NavLink>
         </li>,
+        <li key="about" className="mx-2">
+            <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                    isActive
+                        ? "text-white font-semibold border-b-2 border-white pb-1"
+                        : "text-white hover:text-gray-200 font-medium"
+                }
+            >
+                About
+            </NavLink>
+        </li>,
+        <li key="contact" className="mx-2">
+            <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                    isActive
+                        ? "text-white font-semibold border-b-2 border-white pb-1"
+                        : "text-white hover:text-gray-200 font-medium"
+                }
+            >
+                Contact
+            </NavLink>
+        </li>,
         <li key="clubs" className="mx-2">
             <NavLink
                 to="/availableclubs"
@@ -133,7 +157,7 @@ const Navbar = () => {
                             >
                                 Login
                             </Link>
-                            
+
                         </>
                     )}
                 </div>
