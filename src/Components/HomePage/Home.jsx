@@ -2,79 +2,61 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaHeart, FaLightbulb, FaUserPlus, FaHandshake } from 'react-icons/fa';
+import { clubApi } from '../../api/clubifyApi';
+import { useNavigate } from 'react-router';
 
-// Mock data for clubs (in a real app, this would come from your backend)
-const mockClubs = [
-  {
-    id: 1,
-    name: "Tech Innovators",
-    category: "Technology",
-    members: 1250,
-    description: "Exploring the latest trends in technology and innovation",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "San Francisco, CA"
-  },
-  {
-    id: 2,
-    name: "Creative Writers",
-    category: "Arts",
-    members: 980,
-    description: "A community for passionate writers to share and grow",
-    image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "New York, NY"
-  },
-  {
-    id: 3,
-    name: "Fitness Enthusiasts",
-    category: "Health & Fitness",
-    members: 2100,
-    description: "Stay active and healthy with like-minded individuals",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "Los Angeles, CA"
-  },
-  {
-    id: 4,
-    name: "Food Lovers",
-    category: "Food & Drink",
-    members: 1560,
-    description: "Discover new cuisines and share culinary experiences",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "Chicago, IL"
-  },
-  {
-    id: 5,
-    name: "Photography Masters",
-    category: "Photography",
-    members: 890,
-    description: "Capture beautiful moments with fellow photographers",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "Portland, OR"
-  },
-  {
-    id: 6,
-    name: "Book Club Society",
-    category: "Literature",
-    members: 1420,
-    description: "Reading and discussing great books with passionate readers",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-    location: "Seattle, WA"
-  }
-];
-
-// Function to fetch featured clubs
+// Function to fetch featured clubs from API
 const fetchFeaturedClubs = async () => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  // Return clubs sorted by member count (descending) to show most popular first
-  return [...mockClubs].sort((a, b) => b.members - a.members).slice(0, 6);
+  const clubs = await clubApi.getAllClubs({ sortBy: 'newest' });
+  // Sort by member count (descending) to show most popular first
+  // For now, we'll simulate member counts since the API doesn't return this
+  const clubsWithSimulatedMembers = clubs.map(club => ({
+    ...club,
+    id: club._id,
+    name: club.clubName,
+    members: Math.floor(Math.random() * 3000) + 100, // Simulated member count
+    image: club.bannerImage || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+  }));
+
+  return clubsWithSimulatedMembers.slice(0, 6);
+};
+
+// Function to fetch category counts from all clubs
+const fetchCategoryCounts = async () => {
+  const clubs = await clubApi.getAllClubs({});
+
+  // Count clubs by category
+  const categoryCountMap = {};
+  clubs.forEach(club => {
+    const category = club.category;
+    if (category) {
+      categoryCountMap[category] = (categoryCountMap[category] || 0) + 1;
+    }
+  });
+
+  // Convert to array format and sort by count (descending)
+  const categoryCounts = Object.entries(categoryCountMap)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+
+  return categoryCounts;
 };
 
 const Home = () => {
+  const navigate = useNavigate();
+
   // Using TanStack Query to fetch featured clubs
   const { data: featuredClubs, isLoading, isError, error } = useQuery({
     queryKey: ['featuredClubs'],
     queryFn: fetchFeaturedClubs,
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Using TanStack Query to fetch category counts
+  const { data: categoryCounts, isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ['categoryCounts'],
+    queryFn: fetchCategoryCounts,
+    staleTime: 5 * 60 * 1000,
   });
 
   // How it works steps
@@ -101,17 +83,21 @@ const Home = () => {
     }
   ];
 
-  // Popular categories
-  const popularCategories = [
-    { name: "Technology", count: 142 },
-    { name: "Arts & Creativity", count: 118 },
-    { name: "Health & Fitness", count: 96 },
-    { name: "Food & Drink", count: 84 },
-    { name: "Outdoors", count: 75 },
-    { name: "Photography", count: 62 },
-    { name: "Business", count: 58 },
-    { name: "Music", count: 49 }
+  // Static categories with dynamic counts
+  const staticCategories = [
+    'Technology', 'Arts', 'Health & Fitness', 'Food & Drink',
+    'Outdoors', 'Photography', 'Business', 'Music', 'Education',
+    'Sports', 'Gaming', 'Travel', 'Volunteering', 'Other'
   ];
+
+  // Popular categories with dynamic counts
+  const popularCategories = staticCategories.map(cat => {
+    const foundCat = categoryCounts?.find(c => c.name === cat);
+    return {
+      name: cat,
+      count: foundCat ? foundCat.count : 0
+    };
+  }).sort((a, b) => b.count - a.count).slice(0, 8); // Top 8 by count
 
   return (
     <div className="min-h-screen ">
@@ -136,14 +122,16 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+                  className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                  onClick={() => navigate('/clubs')}
                 >
                   Join a Club
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-white text-[#6A0DAD] border-2 border-[#6A0DAD] px-8 py-4 rounded-full font-semibold text-lg hover:bg-[#6A0DAD] hover:text-white transition-all"
+                  className="bg-white text-[#6A0DAD] border-2 border-[#6A0DAD] px-8 py-4 rounded-full font-semibold text-lg hover:bg-[#6A0DAD] hover:text-white transition-all cursor-pointer"
+                  onClick={() => navigate('/create-club')}
                 >
                   Create a Club
                 </motion.button>
@@ -159,7 +147,7 @@ const Home = () => {
                 <div className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] rounded-2xl p-1 shadow-2xl">
                   <div className="bg-white rounded-xl p-6">
                     <div className="grid grid-cols-2 gap-4">
-                      {mockClubs.slice(0, 4).map((club, index) => (
+                      {featuredClubs?.slice(0, 4).map((club, index) => (
                         <motion.div
                           key={club.id}
                           className="bg-gray-100 rounded-lg p-4 flex flex-col items-center"
@@ -167,8 +155,20 @@ const Home = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                         >
-                          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-                          <p className="font-semibold text-sm mt-2 text-center">{club.name.split(' ')[0]}</p>
+                          {club.image ? (
+                            <img
+                              src={club.image}
+                              alt={club.name}
+                              className="w-16 h-16 rounded-xl object-cover"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80";
+                              }}
+                            />
+                          ) : (
+                            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                          )}
+                          <p className="font-semibold text-sm mt-2 text-center">{club.name?.split(' ')[0]}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -246,53 +246,81 @@ const Home = () => {
               <p className="text-red-500">Error loading featured clubs: {error.message}</p>
             </div>
           ) : (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              {featuredClubs?.map((club, index) => (
-                <motion.div
-                  key={club.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-100 border border-gray-100"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -3, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
-                >
-                  <div className="h-48 overflow-hidden">
-                    <div className="bg-gray-200 border-2 border-dashed w-full h-full flex items-center justify-center">
-                      <span className="text-gray-500">Club Image</span>
+            <>
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                {featuredClubs?.map((club, index) => (
+                  <motion.div
+                    key={club.id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-100 border border-gray-100"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -3, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
+                  >
+                    <div className="h-48 overflow-hidden">
+                      {club.image ? (
+                        <img
+                          src={club.image}
+                          alt={club.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80";
+                          }}
+                        />
+                      ) : (
+                        <div className="bg-gray-200 border-2 border-dashed w-full h-full flex items-center justify-center">
+                          <span className="text-gray-500">Club Image</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-bold text-gray-800">{club.name}</h3>
-                      <span className="bg-[#6A0DAD]/10 text-[#6A0DAD] text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                        {club.category}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-4">{club.description}</p>
-                    <div className="flex items-center text-gray-500 mb-4">
-                      <FaMapMarkerAlt className="mr-2" />
-                      <span>{club.location}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-gray-700">
-                        <FaUsers className="mr-2" />
-                        <span>{club.members.toLocaleString()} members</span>
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-xl font-bold text-gray-800">{club.name}</h3>
+                        <span className="bg-[#6A0DAD]/10 text-[#6A0DAD] text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                          {club.category}
+                        </span>
                       </div>
-                      <button className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
-                        Join
-                      </button>
+                      <p className="text-gray-600 mb-4">{club.description}</p>
+                      <div className="flex items-center text-gray-500 mb-4">
+                        <FaMapMarkerAlt className="mr-2" />
+                        <span>{club.location}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-gray-700">
+                          <FaUsers className="mr-2" />
+                          <span>{club.members.toLocaleString()} members</span>
+                        </div>
+                        <button
+                          className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                          onClick={() => navigate(`/clubs/${club.id}`)}
+                        >
+                          Details
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <div className="mt-12 text-center">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
+                  onClick={() => navigate('/availableclubs')}
+                >
+                  See All Clubs
+                </motion.button>
+              </div>
+            </>
           )}
         </div>
       </section>

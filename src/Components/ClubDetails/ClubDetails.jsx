@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
-import { clubApi, eventApi, membershipApi } from '../../api/clubifyApi';
+import { clubApi, eventApi, membershipApi, stripeApi } from '../../api/clubifyApi';
 import { AuthContext } from '../../Contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { FaUsers, FaCalendarAlt, FaMapMarkerAlt, FaDollarSign, FaClock, FaArrowLeft, FaStar, FaUserPlus } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import PaymentComponent from '../PaymentComponent';
 
 const ClubDetails = () => {
   const { clubId } = useParams();
@@ -28,8 +29,9 @@ const ClubDetails = () => {
 
   const fetchClubDetails = async () => {
     try {
-      const allClubs = await clubApi.getAllClubs(false);
-      const foundClub = allClubs.find(c => c._id === clubId);
+      // Get all clubs to find the specific club
+      const allClubs = await clubApi.getAllClubs();
+      const foundClub = allClubs.find(c => c._id.toString() === clubId);
 
       if (!foundClub) {
         toast.error('Club not found');
@@ -64,6 +66,8 @@ const ClubDetails = () => {
     }
   };
 
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const handleJoinClub = async () => {
     if (!user) {
       toast.error('Login kor age');
@@ -71,23 +75,22 @@ const ClubDetails = () => {
       return;
     }
 
+    // If it's a paid club, show the payment modal
+    if (club?.membershipFee > 0) {
+      setShowPaymentModal(true);
+      return;
+    }
+
+    // For free clubs, proceed directly
     if (isJoining) return;
 
     setIsJoining(true);
 
     try {
-      let paymentId = null;
-
-      if (club.membershipFee > 0) {
-        paymentId = `pay_${Date.now()}_${clubId}`;
-        toast.info(`Processing $${club.membershipFee} payment...`, { autoClose: 2500 });
-        await new Promise(r => setTimeout(r, 1500)); // Fake delay for realism
-      }
-
-      await axios.post('https://clubify-backend.onrender.com/memberships', {
+      await membershipApi.createMembership({
         userEmail: user.email,
         clubId: clubId,
-        paymentId: paymentId,
+        status: 'active'
       });
 
       toast.success('Successfully joined the club!');
@@ -95,10 +98,20 @@ const ClubDetails = () => {
 
     } catch (error) {
       console.error('Join failed:', error);
-      toast.error(error.response?.data?.message || 'Join korar somoy error hoise');
+      toast.error(error.response?.data?.error || 'Join korar somoy error hoise');
     } finally {
       setIsJoining(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    toast.success('Successfully joined the club!');
+    setIsMember(true);
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentModal(false);
   };
 
   if (loading) {
@@ -162,18 +175,23 @@ const ClubDetails = () => {
         {/* Club Header */}
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden mb-8">
           <div className="h-64 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] relative">
-            {club.bannerImage ? (
+            {club.bannerImage || club.image || club.clubImage ? (
               <img
-                src={club.bannerImage}
+                src={club.bannerImage || club.image || club.clubImage}
                 alt={club.clubName}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Banner image failed to load:', e.target.src);
+                  e.target.onerror = null; // Prevent infinite loop
+                  e.target.src = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"; // fallback image
+                }}
               />
             ) : (
               <div className="bg-gray-200 border-2 border-dashed w-full h-full flex items-center justify-center">
                 <span className="text-gray-500 text-xl">Club Image</span>
               </div>
             )}
-            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center">
+            <div className="absolute inset-0 bg-opacity-30 flex items-center">
               <div className="container mx-auto px-6">
                 <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
                   {club.clubName}
@@ -408,6 +426,38 @@ const ClubDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal for Paid Clubs */}
+      {showPaymentModal && club && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full relative">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-800">
+                  Join {club.clubName}
+                </h3>
+                <button
+                  onClick={handlePaymentCancel}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Membership Fee: ${club.membershipFee}
+              </p>
+              <PaymentComponent
+                amount={club.membershipFee}
+                type="membership"
+                itemId={club._id}
+                userEmail={user?.email}
+                onSuccess={handlePaymentSuccess}
+                onCancel={handlePaymentCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
