@@ -140,14 +140,14 @@ const Contact = () => {
         </div>
 
         {/* Map Section */}
-        <div className="mt-12 bg-white rounded-2xl shadow-lg overflow-hidden">
+        {/* <div className="mt-12 bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Visit Us</h2>
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
               <span className="text-gray-500">Location Map</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
