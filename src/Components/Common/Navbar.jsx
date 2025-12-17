@@ -116,8 +116,8 @@ const Navbar = () => {
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full ring-2 ring-white">
                                     <img
-                                        alt="Tailwind CSS Navbar component"
-                                        src={user.photoURL || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+                                        alt="User Profile"
+                                        src={user.photoURL || "https://ui-avatars.com/api/?name=" + (user.name || user.email || 'User') + "&background=6A0DAD&color=fff"}
                                         className="object-cover"
                                     />
                                 </div>

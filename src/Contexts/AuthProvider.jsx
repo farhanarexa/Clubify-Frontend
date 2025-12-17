@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
             await userApi.createUser({
                 email: cleanEmail,
                 name: cleanEmail.split('@')[0], // Use part of email as default name
-                photoURL: '',
+                photoURL: '', // Will be updated later if needed
             });
 
             return userCredential;
