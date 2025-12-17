@@ -3,7 +3,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { auth } from '../Firebase/firebase.init';
 
-const API_BASE_URL = 'http://localhost:3000'; // Update this to match your backend URL
+// const API_BASE_URL = 'https://clubify-backend.vercel.app'; // Update this to match your backend URL
+const API_BASE_URL = 'https://clubify-backend.onrender.com'; // Update this to match your backend URL
+// const API_BASE_URL = 'http://localhost:3000'; // Update this to match your backend URL
 
 // Create an axios instance with default settings
 const api = axios.create({

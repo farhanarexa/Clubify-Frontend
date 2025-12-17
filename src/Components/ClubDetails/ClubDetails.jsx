@@ -84,7 +84,7 @@ const ClubDetails = () => {
         await new Promise(r => setTimeout(r, 1500)); // Fake delay for realism
       }
 
-      await axios.post('http://localhost:3000/memberships', {
+      await axios.post('https://clubify-backend.onrender.com/memberships', {
         userEmail: user.email,
         clubId: clubId,
         paymentId: paymentId,
