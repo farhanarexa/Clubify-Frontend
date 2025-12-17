@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router';
 
 const DashboardLayout = () => {
     return (
-        <div className="flex h-screen bg-gray-50">
+        <div className="flex h-screen">
             {/* Sidebar */}
             <div className="hidden lg:block w-64 bg-linear-to-b from-[#6A0DAD] to-[#9F62F2] text-white p-4">
                 <div className="mb-8">
@@ -53,7 +53,7 @@ const DashboardLayout = () => {
                                 </svg>
                             </button>
                         </div>
-                        <h2 className="text-lg font-semibold text-gray-800">Admin Dashboard</h2>
+                        <h2 className="text-lg font-semibold text-center text-gray-800">Admin Dashboard</h2>
 
                         <div className="flex items-center space-x-4">
                             <div className="w-8 h-8 rounded-full bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] flex items-center justify-center text-white text-sm font-semibold">

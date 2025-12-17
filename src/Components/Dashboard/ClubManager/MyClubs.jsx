@@ -304,7 +304,7 @@ const MyClubs = () => {
                             </button>
                             <button
                                 onClick={() => handleDeleteClub(club._id, club.clubName)}
-                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
+                                className="bg-red-400 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
                             >
                                 <FaTrash className="mr-2" /> Delete
                             </button>

@@ -81,14 +81,14 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F0] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl text-center md:text-4xl font-bold text-gray-800 mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-lg text-gray-600">Monitor and manage the Clubify platform</p>
+          <p className="text-lg text-center text-gray-600 pb-5">Monitor and manage the Clubify platform</p>
         </div>
 
         {/* Summary Cards */}
