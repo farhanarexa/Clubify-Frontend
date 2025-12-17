@@ -225,13 +225,26 @@ const Events = () => {
 
               return (
                 <div key={event._id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className="h-48 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] relative">
-                    <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <h3 className="text-xl font-bold">{event.title}</h3>
-                      <p className="text-sm opacity-90">{associatedClub?.clubName || 'Unknown Club'}</p>
+                  {event.imageUrl ? (
+                    <div className="relative">
+                      <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                        <h3 className="text-xl font-bold text-white">{event.title}</h3>
+                        <p className="text-sm text-white opacity-90">{associatedClub?.clubName || 'Unknown Club'}</p>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="h-48 bg-linear-to-r from-[#6A0DAD] to-[#9F62F2] relative">
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <h3 className="text-xl font-bold">{event.title}</h3>
+                        <p className="text-sm opacity-90">{associatedClub?.clubName || 'Unknown Club'}</p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="p-6">
                     <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>

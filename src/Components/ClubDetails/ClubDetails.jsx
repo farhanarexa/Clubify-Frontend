@@ -285,6 +285,18 @@ const ClubDetails = () => {
                         <div className="flex flex-col md:flex-row md:items-center">
                           <div className="flex-1 mb-4 md:mb-0">
                             <h3 className="text-xl font-bold text-gray-800 mb-2">{event.title}</h3>
+
+                            {/* Event image display if available */}
+                            {event.imageUrl && (
+                              <div className="mb-3">
+                                <img
+                                  src={event.imageUrl}
+                                  alt={event.title}
+                                  className="w-full h-40 object-cover rounded-lg border border-gray-200"
+                                />
+                              </div>
+                            )}
+
                             <div className="flex items-center text-gray-600 mb-2">
                               <FaMapMarkerAlt className="mr-2 text-[#6A0DAD]" />
                               <span>{event.location}</span>

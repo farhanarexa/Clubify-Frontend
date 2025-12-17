@@ -120,7 +120,8 @@ const EventsManagement = () => {
         location: data.location,
         isPaid: data.isPaid === 'true', // Convert string to boolean
         eventFee: parseFloat(data.eventFee) || 0,
-        maxAttendees: parseInt(data.maxAttendees) || null
+        maxAttendees: parseInt(data.maxAttendees) || null,
+        imageUrl: data.imageUrl || ''
       };
 
       handleCreateEvent(eventData);
@@ -242,6 +243,25 @@ const EventsManagement = () => {
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Event Image URL</label>
+            <input
+              {...register('imageUrl', {
+                pattern: {
+                  value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*\.(jpg|jpeg|png|gif|webp)$/i,
+                  message: 'Please enter a valid image URL (with extension jpeg, jpg, png, gif, or webp)'
+                }
+              })}
+              type="text"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.imageUrl ? 'border-red-500' : 'border-gray-300'
+                }`}
+              placeholder="https://example.com/image.jpg"
+            />
+            {errors.imageUrl && (
+              <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>
+            )}
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Attendees</label>
             <input
               {...register('maxAttendees', {
@@ -304,7 +324,8 @@ const EventsManagement = () => {
         location: editingEvent?.location || '',
         isPaid: editingEvent?.isPaid?.toString() || 'false',
         eventFee: editingEvent?.eventFee || 0,
-        maxAttendees: editingEvent?.maxAttendees || 1
+        maxAttendees: editingEvent?.maxAttendees || 1,
+        imageUrl: editingEvent?.imageUrl || ''
       }
     });
 
@@ -318,6 +339,7 @@ const EventsManagement = () => {
         isPaid: data.isPaid === 'true', // Convert string to boolean
         eventFee: parseFloat(data.eventFee) || 0,
         maxAttendees: parseInt(data.maxAttendees) || null,
+        imageUrl: data.imageUrl || editingEvent.imageUrl || '',
         updatedAt: new Date()
       };
 
@@ -442,6 +464,25 @@ const EventsManagement = () => {
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Event Image URL</label>
+            <input
+              {...register('imageUrl', {
+                pattern: {
+                  value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*\.(jpg|jpeg|png|gif|webp)$/i,
+                  message: 'Please enter a valid image URL (with extension jpeg, jpg, png, gif, or webp)'
+                }
+              })}
+              type="text"
+              className={`w-full px-3 py-1.5 border rounded-lg focus:ring-2 focus:ring-[#6A0DAD] focus:border-[#6A0DAD] ${errors.imageUrl ? 'border-red-500' : 'border-gray-300'
+                }`}
+              placeholder="https://example.com/image.jpg"
+            />
+            {errors.imageUrl && (
+              <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>
+            )}
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Attendees</label>
             <input
               {...register('maxAttendees', {
@@ -532,6 +573,17 @@ const EventsManagement = () => {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-gray-800">{event.title}</h3>
                     <p className="text-gray-600 mt-1">{event.description}</p>
+
+                    {/* Event image display */}
+                    {event.imageUrl && (
+                      <div className="mt-3">
+                        <img
+                          src={event.imageUrl}
+                          alt={event.title}
+                          className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                        />
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-600">
                       <div className="flex items-center">

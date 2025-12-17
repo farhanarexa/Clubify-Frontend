@@ -96,7 +96,7 @@ const Navbar = () => {
                             {links}
                         </ul>
                     </div>
-                    <img className='h-13 w-13 rounded-full bg-linear-to-r from-[#A45CFF] to-[#7ED8FF] flex items-center justify-center shadow-lg' src="https://i.postimg.cc/JhrQ3PRb/people-2368650.png" alt="" />
+                    <img className='h-12 w-12 rounded-full bg-linear-to-r from-[#A45CFF] to-[#7ED8FF] flex items-center justify-center shadow-lg' src="https://i.postimg.cc/JhrQ3PRb/people-2368650.png" alt="" />
                     <a className=" ml-2 text-3xl font-bold text-white">
                         Clubify
                     </a>
